@@ -1,5 +1,6 @@
 from days import num_of_current_day, before_or_on_friday, after_friday
 
+
 def test_num_of_current_day():
     assert(num_of_current_day("TH") == 4)
     assert(num_of_current_day("F") == 5)
