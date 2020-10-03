@@ -9,6 +9,7 @@ This code is for figuring out how many days there are until Friday.
 NUM_OF_FRIDAY = 5
 DAYS_OF_WEEK = 7
 
+
 def num_of_current_day(day):
     '''
         Function -- num_of_current_day
