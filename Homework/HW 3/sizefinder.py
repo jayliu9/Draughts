@@ -22,7 +22,7 @@ def size_rank(chest_measurement, increase, min_chest):
             chest_measurement -- The chest measurement
             increase -- The consistent difference in inches between two
             adjacent sizes in a size chart.
-            min_chest -- The minimum inches of chest in a size chart. 
+            min_chest -- The minimum inches of chest in a size chart.
         Returns:
             The level of chest measurement in size charts in proportional form.
     '''
@@ -69,7 +69,7 @@ def find_size(lvl_of_chest_m):
     elif is_xxxl_lvl:
         size = "XXXL"
     else:
-        size = NO_MATCHING 
+        size = NO_MATCHING
     return size
 
 
@@ -83,22 +83,22 @@ def main():
 
     chest = float(input("Chest measurement in inches: "))
     if chest < MIN_CHEST_KID or chest >= MAX_CHEST_MEN:
-        print("Sorry, we don’t carry your size")
+        print("Sorry, we don't carry your size")
     else:
         level_in_kids = size_rank(chest, INCREASE_KID_AND_WOMEN, MIN_CHEST_KID)
         level_in_women = size_rank(chest, INCREASE_KID_AND_WOMEN,
-                                  MIN_CHEST_WOMEN)
+                                   MIN_CHEST_WOMEN)
         level_in_men = size_rank(chest, INCREASE_MEN, MIN_CHEST_MEN)
         size_in_kids = find_size(level_in_kids)
         size_in_women = find_size(level_in_women)
         size_in_men = find_size(level_in_men)
         if size_in_kids == "XXXL":
             size_in_kids = NO_MATCHING
-        print("Your size choice:")
+        print("Your size choices:")
         print("Kids size:", size_in_kids)
         print("Womens size:", size_in_women)
         print("Mens size:", size_in_men)
 
 
 if __name__ == "__main__":
-    main() 
+    main()

@@ -12,3 +12,4 @@ def test_find_size():
     assert(find_size(1.25) == "M")
     assert(find_size(-0.5) == "not available")
     assert(find_size(6) == "not available")
+    assert(find_size(3.25) == "XL")

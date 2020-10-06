@@ -24,7 +24,7 @@ def calculate_mileage(start, end):
     '''
     is_start_valid = start > 0
     is_end_valid = end > 0 and end > start
-    
+
     if is_start_valid and is_end_valid:
         return end - start
     else:
@@ -45,8 +45,8 @@ def get_reimbursement_amount(mileage):
     '''
     STANDARD_RATE = 57.5
     CENTS_TO_DOLLARS = 0.01
-    
-    amount_of_reimbursement =  mileage * STANDARD_RATE * CENTS_TO_DOLLARS
+
+    amount_of_reimbursement = mileage * STANDARD_RATE * CENTS_TO_DOLLARS
     return round(amount_of_reimbursement, 2)
 
 
@@ -65,7 +65,7 @@ def get_actual_mileage_rate(mpg, fuel_price):
     '''
     is_mpg_valid = isinstance(mpg, int) and mpg > 0
     is_fuel_price_valid = isinstance(fuel_price, float) and fuel_price >= 0
-    
+
     if is_mpg_valid and is_fuel_price_valid:
         dollars_per_mile = fuel_price / mpg
         return round(dollars_per_mile, 4)
@@ -90,9 +90,9 @@ def get_actual_trip_cost(start, end, mpg, fuel_price):
             places. If any of the supplied arguments are invalid, returns 0.0
     '''
     mileage = calculate_mileage(start, end)
-    actual_mileage_rate =  get_actual_mileage_rate(mpg, fuel_price)
+    actual_mileage_rate = get_actual_mileage_rate(mpg, fuel_price)
     actual_trip_cost = mileage * actual_mileage_rate
-    return actual_trip_cost
+    return round(actual_trip_cost, 2)
 
 
 def main():
@@ -125,7 +125,7 @@ def main():
         fuel_price = float(input("Enter the fuel price per gallon: "))
         trip_cost = get_actual_trip_cost(start_reading, end_reading, car_mpg,
                                          fuel_price)
-        print("Your trip cost $​%.2f" % trip_cost)
+        print("Your trip cost $%.2f" % trip_cost)
     else:
         print("Not a valid choice")
 
