@@ -30,9 +30,9 @@ def size_rank(chest_measurement, increase, min_chest):
     return chest_m_level
 
 
-def size_finder(lvl_of_chest_m):
+def find_size(lvl_of_chest_m):
     '''
-        Function -- size_finder
+        Function -- find_size
             Determines the size based on the level of chest measurement.
         Parameter:
             lvl_of_chest_m -- The level of chest measurement.
@@ -89,10 +89,10 @@ def main():
         level_in_women = size_rank(chest, INCREASE_KID_AND_WOMEN,
                                   MIN_CHEST_WOMEN)
         level_in_men = size_rank(chest, INCREASE_MEN, MIN_CHEST_MEN)
-        size_in_kids = size_finder(level_in_kids)
-        size_in_women = size_finder(level_in_women)
-        size_in_men = size_finder(level_in_men)
-        if size_finder(level_in_kids) == "XXXL":
+        size_in_kids = find_size(level_in_kids)
+        size_in_women = find_size(level_in_women)
+        size_in_men = find_size(level_in_men)
+        if find_size(level_in_kids) == "XXXL":
             size_in_kids = NO_MATCHING
         print("Your size choice:")
         print("Kids size:", size_in_kids)

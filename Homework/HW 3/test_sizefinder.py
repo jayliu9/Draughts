@@ -1,4 +1,4 @@
-from sizefinder import size_rank, size_finder
+from sizefinder import size_rank, find_size
 
 
 def test_size_rank():
@@ -7,8 +7,8 @@ def test_size_rank():
     assert(size_rank(56, 3, 26) == 10)
 
 
-def test_size_finder():
-    assert(size_finder(0) == "S")
-    assert(size_finder(1.25) == "M")
-    assert(size_finder(-0.5) == "not available")
-    assert(size_finder(6) == "not available")
+def test_find_size():
+    assert(find_size(0) == "S")
+    assert(find_size(1.25) == "M")
+    assert(find_size(-0.5) == "not available")
+    assert(find_size(6) == "not available")
