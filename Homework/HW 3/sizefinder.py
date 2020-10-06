@@ -92,7 +92,7 @@ def main():
         size_in_kids = find_size(level_in_kids)
         size_in_women = find_size(level_in_women)
         size_in_men = find_size(level_in_men)
-        if find_size(level_in_kids) == "XXXL":
+        if size_in_kids == "XXXL":
             size_in_kids = NO_MATCHING
         print("Your size choice:")
         print("Kids size:", size_in_kids)
