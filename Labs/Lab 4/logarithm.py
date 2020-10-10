@@ -31,7 +31,7 @@ def log_base_2(num):
 def main():
     user_in = int(input("Enter a positive power of 2: "))
     result_of_log = log_base_2(user_in)
-    print(result_of_log)
+    print("log(%d) = %d" % (user_in, result_of_log))
     
 
 if __name__ == "__main__":
