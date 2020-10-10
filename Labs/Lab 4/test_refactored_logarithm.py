@@ -6,3 +6,4 @@ def test_calculate_log():
     assert(calculate_log(1024, 2) == 10)
     assert(calculate_log(16, 4) == 2)
     assert(calculate_log(125, 5) == 3)
+    
