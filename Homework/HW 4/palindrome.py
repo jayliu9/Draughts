@@ -21,7 +21,7 @@ def is_palindrome(raw_str):
         Returns:
             The boolean value of whether the string is a palindrome
     '''
-    normalized_str = raw_str.replace(" ","").lower()
+    normalized_str = raw_str.replace(" ", "").lower()
     is_a_palindrome = (len(normalized_str) >= 2 and
                        normalized_str[::-1] == normalized_str)
     if is_a_palindrome:

@@ -89,7 +89,7 @@ def is_repetition(guess, guessed_letter):
 def guessed_so_far(previous_guess, guess):
     '''
         Function - guessed_so_far
-            Keeps track of each letter the user has guesses so far in 
+            Keeps track of each letter the user has guesses so far in
             chronological order
         Parameters:
             previous_guess -- all the previous letter guesses from the users in
@@ -107,6 +107,7 @@ def main():
     SECRET_WORDS = ["APPLE", "OBVIOUS", "XYLOPHONE"]
     MAXIMUM_GUESS_NUMBER = 6
     TOTAL_ROUND = 3
+    GUESSES_SO_FAR_PROMPT = "Your guesses so far:"
 
     count_round = 1
     num_of_win = 0
@@ -121,25 +122,22 @@ def main():
             is_letter = len(user_guess) == 1
             if is_letter:
                 if is_repetition(user_guess, current_guesses):
-                    print("You have already guessed that letter!")
+                    print("You've already guessed that letter!")
                 else:
                     if count_guess == MAXIMUM_GUESS_NUMBER:
                         print("You lose! The word was", current_secret_word)
                         break
                     hidden_word = letter_guess(user_guess, current_secret_word,
                                                hidden_word)
-                    print(hidden_word)
                     current_guesses = guessed_so_far(current_guesses,
                                                      user_guess)
-                    print("Your guess so far:", current_guesses)
                     count_guess += 1
-            else:
-                if word_guess(user_guess, current_secret_word):
-                    print("You win!")
-                    num_of_win += 1
-                    break
-                else:
-                    print("Your guess is wrong!")
+            elif word_guess(user_guess, current_secret_word):
+                print("You win!")
+                num_of_win += 1
+                break
+            print(hidden_word)
+            print(GUESSES_SO_FAR_PROMPT, current_guesses)
         count_round += 1
     print("You won", num_of_win, "out of 3")
 

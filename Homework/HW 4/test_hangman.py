@@ -19,19 +19,19 @@ def test_letter_guess():
 
 
 def test_word_guess():
-    assert(word_guess("APPLE", "APPLE") == True)
-    assert(word_guess("GRAPE", "APPLE") == False)
-    assert(word_guess("APP", "APPLE") == False)
-    assert(word_guess("", "APPLE") == False)
-    assert(word_guess("  ", "APPLE") == False)
+    assert(word_guess("APPLE", "APPLE") is True)
+    assert(word_guess("GRAPE", "APPLE") is False)
+    assert(word_guess("APP", "APPLE") is False)
+    assert(word_guess("", "APPLE") is False)
+    assert(word_guess("  ", "APPLE") is False)
 
 
 def test_is_repetition():
-    assert(is_repetition("A", "AFG") == True)
-    assert(is_repetition("G", "AFG") == True)
-    assert(is_repetition("C", "AFG") == False)
-    assert(is_repetition("!", "AFG") == False)
-    assert(is_repetition(" ", "AFG") == False)
+    assert(is_repetition("A", "AFG") is True)
+    assert(is_repetition("G", "AFG") is True)
+    assert(is_repetition("C", "AFG") is False)
+    assert(is_repetition("!", "AFG") is False)
+    assert(is_repetition(" ", "AFG") is False)
 
 
 def test_guessed_so_far():
