@@ -16,12 +16,13 @@ def average(scores):
         Parameters:
             scores -- A list of the students' scores
         Returns:
-            The average of students' scores.
+            The average of students' scores. If the supplied arguments is a
+            empty list, returns 0
     '''
-    sum = 0
+    average_of_scores = 0
     for x in scores:
-        sum += x
-    return sum / len(scores)
+        average_of_scores += x / len(scores)
+    return average_of_scores
 
 
 def median(scores):
@@ -31,12 +32,13 @@ def median(scores):
         Parameters:
             scores -- A list of the students' scores
         Returns:
-            The median of students' scores.
+            The median of students' scores. If the supplied arguments is a
+            empty list, returns 0
     '''
     copied_scores = scores.copy()
     copied_scores.sort()
     if len(copied_scores) == 0:
-        return 0.0
+        return 0
     elif len(copied_scores) % 2 == 0:
         index1 = len(copied_scores) // 2 - 1
         index2 = len(copied_scores) // 2
@@ -44,7 +46,7 @@ def median(scores):
         return score_median
     else:
         median_index = len(scores) // 2
-        score_median = scores[median_index]
+        score_median = copied_scores[median_index]
         return score_median
 
 
@@ -55,8 +57,11 @@ def lowest(scores):
         Parameters:
             scores -- A list of the students' scores
         Returns:
-            The lowest score of students' scores.
+            The lowest score of students' scores. If the supplied arguments is
+            a empty list, returns 0
     '''
+    if len(scores) == 0:
+        return 0
     copied_scores = scores.copy()
     copied_scores.sort()
     return copied_scores[0]
@@ -69,15 +74,18 @@ def highest(scores):
         Parameters:
             scores -- A list of the students' scores
         Returns:
-            The highest score of students' scores.
+            The highest score of students' scores. If the supplied arguments is
+            a empty list, returns 0
     '''
+    if len(scores) == 0:
+        return 0
     copied_scores = scores.copy()
     copied_scores.sort()
     return copied_scores[-1]
 
 
 def main():
-    scores_of_students = [92, 78, 85, 97, 99, 61, 81, 93, 88]
+    scores_of_students = [94, 85, 73, 77, 86, 95]
     the_average = average(scores_of_students)
     print("The average of the scores is", the_average)
     the_median = median(scores_of_students)
