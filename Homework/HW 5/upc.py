@@ -13,7 +13,7 @@ the supplied string is a valid UPC.
 def is_valid_upc(user_in):
     '''
         Function -- is_valid_upc
-            Checks whether of not the supplied string is a valid UPC
+            Checks whether or not the supplied string is a valid UPC
         Parameter:
             user_in -- A string to consider.
         Returns:
