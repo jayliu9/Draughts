@@ -1,5 +1,12 @@
 '''
-YOUR FILE COMMENT HERE
+Name: Shijie Liu
+NUID: 001561546
+Course: CS 5001
+Course Number: 18529
+Semester: Fall 2020
+
+The code is a module that contains functions for getting basic directions on
+the Seattle Link light rail.
 '''
 LINK_STATIONS = ("University of Washington", "Capitol Hill", "Westlake",
                  "University Street", "Pioneer Square",
@@ -9,13 +16,12 @@ LINK_STATIONS = ("University of Washington", "Capitol Hill", "Westlake",
                  "SeaTac/Airport", "Angle Lake")
 
 
-
 def is_valid_station(station):
     '''
         Function -- is_valid_station
             Checks if a given string is a valid Seattle light rail station.
-            Provided station must match a station name exactly. For example, "mount
-            baker" would not be valid because the case doesn't match.
+            Provided station must match a station name exactly. For example,
+            "mount baker" would not be valid because the case doesn't match.
         Parameter:
             station -- The string to check
         Returns:
@@ -23,7 +29,6 @@ def is_valid_station(station):
             name, False otherwise.
     '''
     return station in LINK_STATIONS
-
 
 
 def get_direction(start, end):
@@ -45,7 +50,7 @@ def get_direction(start, end):
     elif index_difference(start, end) < 0:
         return "Southbound"
     return "Northbound"
-    
+
 
 def get_num_stops(start, end):
     '''
@@ -54,7 +59,7 @@ def get_num_stops(start, end):
         Parameters:
             start - The starting station name
             end - The ending station name.
-        Returns: 
+        Returns:
             The number of stops from start to end. If either station is invalid
             or both stations are the same, return 0.
     '''
@@ -76,7 +81,6 @@ def index_difference(start, end):
         Returns:
             The difference between the indexes of the start station and the end
             station in the predefined tuple.
-            
     '''
     start_index = LINK_STATIONS.index(start)
     end_index = LINK_STATIONS.index(end)

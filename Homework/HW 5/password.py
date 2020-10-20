@@ -35,6 +35,7 @@ def secure_password(user_in):
     uppercase_bool_sum = 0
     digit_bool_sum = 0
     special_character_bool_sum = 0
+    requirements_bool_sum = 0
     for character in user_in:
         if character not in (LOWERCASE_LETTER + UPPERCASE_LETTER + DIGIT +
                              SPECIAL_CHARACTER):
@@ -43,10 +44,12 @@ def secure_password(user_in):
         uppercase_bool_sum += character in UPPERCASE_LETTER
         digit_bool_sum += character in DIGIT
         special_character_bool_sum += character in SPECIAL_CHARACTER
-    meet_requirements = (lowercase_bool_sum >= MINIMUM_VALID_BOOL_SUM and
-                         uppercase_bool_sum >= MINIMUM_VALID_BOOL_SUM and
-                         digit_bool_sum >= MINIMUM_VALID_BOOL_SUM and
-                         special_character_bool_sum >= MINIMUM_VALID_BOOL_SUM)
-    if not meet_requirements:
-        return False
-    return True
+    requirement_bool_sum = ((lowercase_bool_sum >= MINIMUM_VALID_BOOL_SUM) +
+                            (uppercase_bool_sum >= MINIMUM_VALID_BOOL_SUM) +
+                            (digit_bool_sum >= MINIMUM_VALID_BOOL_SUM) +
+                            (special_character_bool_sum >=
+                             MINIMUM_VALID_BOOL_SUM))
+    meet_requirements = requirement_bool_sum >= 3
+    if meet_requirements:
+        return True
+    return False
