@@ -4,8 +4,8 @@ NUID: 001561546
 Course Number: 18533
 Semester: Fall 2020
 
-This code is a function to determine the greatest common divisor (GCD) of
-non-zero positive integers.
+This code consists of functions to determine the greatest common divisor (GCD)
+of non-zero positive integers.
 '''
 
 
