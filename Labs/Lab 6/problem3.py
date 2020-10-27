@@ -7,7 +7,6 @@ Semester: Fall 2020
 This code consists of functions refactored from previous labs which replace
 iteration with recursion.
 '''
-num_of_division = 0
 
 
 def logarithm(num):
@@ -15,17 +14,17 @@ def logarithm(num):
         Function -- logarithm
             Calculates the logarithm base 2.
         Parameter:
-            num -- The number to calculate. Assumes the number is a positive
+            num -- A number to calculate. Assumes the number is a positive
             integer which is a power of 2
         Returns:
             The result of the log base 2 of the parameter
     '''
     LOG_BASE = 2
+    COUNT = 1
 
-    if num // LOG_BASE == 0:
-        return num_of_division
-    num_of_division += 1
-    return logarithm(num / LOG_BASE)
+    if num == 1:
+        return 0
+    return COUNT + logarithm(num / 2)
 
 
 def binary_to_decimal(binary):
