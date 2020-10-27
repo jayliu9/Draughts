@@ -11,4 +11,9 @@ def test_get_gcd():
 
 
 def test_get_n_gcd():
-    
+    assert(get_n_gcd([0, 12, 20, 28]) == 4)
+    assert(get_n_gcd([0]) == 0)
+    assert(get_n_gcd([12, 8]) == 4)
+    assert(get_n_gcd([12, 0, 28, 20]) == 4)
+    assert(get_n_gcd([12]) == 12)
+    assert(get_n_gcd([6, 27, 18, 30, 15, 96]) == 3)
