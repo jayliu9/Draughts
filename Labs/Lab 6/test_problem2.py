@@ -1,4 +1,4 @@
-from gcd import get_gcd
+from problem2 import get_gcd, get_n_gcd
 
 
 def test_get_gcd():
@@ -8,3 +8,7 @@ def test_get_gcd():
     assert(get_gcd(8, 12) == 4)
     assert(get_gcd(0, 0) == 0)
     assert(get_gcd(12, 12) == 12)
+
+
+def test_get_n_gcd():
+    
