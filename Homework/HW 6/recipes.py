@@ -73,3 +73,11 @@ def is_empty_string(string):
 def time_validator(time):
     if time < 0:
         raise ValueError
+
+
+def create_filename(recipe_name):
+    UNDERSCORE = "_"
+    WHITESPACE = " "
+    filename = recipe_name.lower().strip().replace(
+        WHITESPACE, UNDERSCORE)
+
