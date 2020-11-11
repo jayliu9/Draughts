@@ -13,7 +13,8 @@ PROMPT_INGRED = ("Enter the ingredients on one line. Separate each" +
                  "ingredient with a comma")
 PROMPT_DIRECTION = "Enter the direction (1 paragraph only): "
 PROMPT_TIME = "Enter the time needed in minutes: "
-PROMPT_RECIPE = "Enter the name of the recipe"
+PROMPT_RECIPE = "Enter a name of the recipe"
+PROMPT_FILENAME = "Enter a string containing only letters, numbers and spaces "
 
 
 def main():
@@ -47,6 +48,20 @@ def main():
             time_string = input(PROMPT_TIME)
 
     name_of_recipe = input(PROMPT_RECIPE)
+    filename = create_filename(name_of_recipe)
+    try:
+        filename_validator(filename)
+    except ValueError:
+        print("Unable to create the filename.")
+        valid_filename = False
+        new_recipe_name = input(PROMPT_FILENAME)
+        while not valid_filename:
+            new_filename = create_filename(new_recipe_name)
+            try:
+                filename_validator(new_filename)
+                valid_filename = True
+            except ValueError:
+                new_recipe_name = input(PROMPT_FILENAME)
             
 
 def ingredient_validator(item_lst):
@@ -78,6 +93,46 @@ def time_validator(time):
 def create_filename(recipe_name):
     UNDERSCORE = "_"
     WHITESPACE = " "
-    filename = recipe_name.lower().strip().replace(
-        WHITESPACE, UNDERSCORE)
+    SUFFIX = ".txt"
+    temp_name = recipe_name.lower().strip().replace(WHITESPACE, UNDERSCORE)
+    filename = removal(temp_name) + SUFFIX
+    return filename
 
+
+
+def removal(string):
+    new_str = ""
+    for character in string:
+        if character.isalnum():
+            new_str += character
+    return new_str
+
+
+def filename_validator(filename):
+    EMPTY_NAME = ".txt"
+    if filename == EMPTY_NAME:
+        raise ValueError
+
+def recipe_content(recipe_name, ingred_lst, entered_time, direction):
+    NEWLINE = ""
+    INGRED_SUBTITLE = "Ingredient:"
+    DIRECTION_SUBTITLE = "Directions:"
+
+    time_content = "Time: %d minutes" % entered_time 
+    content_lst = []
+    content_lst.append(recipe_name)
+    content_lst.append(NEWLINE)
+    content_lst.append(INGRED_SUBTITLE)
+    content_lst.append(NEWLINE)
+    for item in ingred_lst:
+        content_lst.append(item)
+    content_lst.append(NEWLINE)
+    content_lst.append(time_content)
+    content_lst.append(NEWLINE)
+    content_lst.append(DIRECTION_SUBTITLE)
+    content_lst.append(direction)
+    return content_lst
+
+def write_recipe(content, filename):
+    with open(filename, "w") as file:
+        for r
