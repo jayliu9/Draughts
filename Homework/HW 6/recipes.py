@@ -90,6 +90,18 @@ def main():
 
 
 def ingredient_validator(item_lst):
+    '''
+        Function -- ingredient_validator
+            Checks that a list of ingredients must contain at least one
+            non-empty string.
+        Parameter:
+            item_lst -- A list of ingredients
+        Raises:
+            ValueError -- If the list of ingredients contain less than one
+            non-empty string.
+        Returns:
+            Nothing
+    '''
     MIN_VALID_STR = 1
 
     bool_sum = 0
@@ -100,6 +112,15 @@ def ingredient_validator(item_lst):
 
 
 def ingredient_processor(ingredients):
+    '''
+        Function -- ingredient_validator
+            Splits a string of ingredients into a list and remove leading or
+            trailing whitespace from each item.
+        Parameter:
+            ingredients -- A string of ingredients
+        Returns:
+            The list of ingredients after processing each item.
+    '''
     ingredient_lst = ingredients.split(",")
     for i, item in enumerate(ingredient_lst):
         ingredient_lst[i] = item.strip()
@@ -107,15 +128,41 @@ def ingredient_processor(ingredients):
 
 
 def not_empty_string(string):
+    '''
+        Function -- not_empty_string
+            Checks if the give string is not a empty string.
+        Parameter:
+            string -- A string to check
+        Returns:
+            True if the string is not empty, False otherwise.
+    '''
     return len(string) != 0
 
 
 def time_validator(time):
+    '''
+        Function -- time_validator
+            Checks that time is greater than or equal to 0.
+        Parameter:
+            time -- time to check
+        Raises:
+            ValueError -- If the time is less than 0.
+        Returns:
+            Nothing
+    '''
     if time < 0:
         raise ValueError
 
 
 def create_filename(recipe_name):
+    '''
+        Function -- create_filename
+            Creates a filename using the recipe name.
+        Parameter:
+            recipe_name -- A recipe name
+        Returns:
+            The filename from the recipe name
+    ''' 
     UNDERSCORE = "_"
     WHITESPACE = " "
     SUFFIX = ".txt"
@@ -125,6 +172,15 @@ def create_filename(recipe_name):
 
 
 def removal(string):
+    '''
+        Function -- removal
+            Removes any remaining non-alphanumeric characters from a
+            string.
+        Parameter:
+            string -- A string
+        Returns:
+            The string without non-alphanumeric characters.
+    ''' 
     new_str = ""
     for character in string:
         if character.isalnum() or character == "_":
@@ -133,6 +189,16 @@ def removal(string):
 
 
 def filename_validator(filename):
+    '''
+        Function -- filename_validator
+            Checks that a filename is not just ".txt".
+        Parameter:
+            filename -- a filename to check
+        Raises:
+            ValueError -- If the filename is just ".txt".
+        Returns:
+            Nothing
+    '''
     EMPTY_NAME = ".txt"
     if filename == EMPTY_NAME:
         raise ValueError
