@@ -8,12 +8,12 @@ Semester: Fall 2020
 The code is a recursive function that checks if every string in a given list of
 strings contains a vowel.
 '''
-VOWELS = ("a", "e", "i", "o", "u")
+VOWELS = ("a", "e", "i", "o", "u", "A", "E", "I", "O", "U")
 
 
-def vowelsearch(lst):
+def contains_vowel(lst):
     '''
-        Function -- vowelsearch
+        Function -- contains_vowel
             Checks if every string in a given list of strings contain a vowel.
         Parameter:
             lst -- A list of strings
@@ -24,8 +24,8 @@ def vowelsearch(lst):
     if len(lst) == 0:
         return False
     elif len(lst) == 1:
-        return vowel_in_string(lst[0]) 
-    return vowel_in_string(lst[0]) and vowel_in_string(lst[1:]) 
+        return vowel_in_string(lst[0])
+    return vowel_in_string(lst[0]) and contains_vowel(lst[1:])
 
 
 def vowel_in_string(word):
