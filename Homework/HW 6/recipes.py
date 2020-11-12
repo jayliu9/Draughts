@@ -72,7 +72,7 @@ def main():
                             alternative_name = input(PROMPT_FILENAME)
 
                 recipe_content = create_content_lst(
-                    name_of_recipe, ingred_lst, needed_time, direction)
+                    name_of_recipe, ingred_lst, time_string, direction)
                 write_recipe(recipe_content, filename)
                 print(name_of_recipe, "recipe saved to", filename)
 
@@ -113,7 +113,7 @@ def ingredient_validator(item_lst):
 
 def ingredient_processor(ingredients):
     '''
-        Function -- ingredient_validator
+        Function -- ingredient_processor
             Splits a string of ingredients into a list and remove leading or
             trailing whitespace from each item.
         Parameter:
@@ -144,7 +144,7 @@ def time_validator(time):
         Function -- time_validator
             Checks that time is greater than or equal to 0.
         Parameter:
-            time -- time to check
+            time -- time to check.
         Raises:
             ValueError -- If the time is less than 0.
         Returns:
@@ -162,7 +162,7 @@ def create_filename(recipe_name):
             recipe_name -- A recipe name
         Returns:
             The filename from the recipe name
-    ''' 
+    '''
     UNDERSCORE = "_"
     WHITESPACE = " "
     SUFFIX = ".txt"
@@ -174,13 +174,13 @@ def create_filename(recipe_name):
 def removal(string):
     '''
         Function -- removal
-            Removes any remaining non-alphanumeric characters from a
-            string.
+            Removes any remaining non-alphanumeric characters except for
+            underscores from a string.
         Parameter:
             string -- A string
         Returns:
             The string without non-alphanumeric characters.
-    ''' 
+    '''
     new_str = ""
     for character in string:
         if character.isalnum() or character == "_":
@@ -193,7 +193,7 @@ def filename_validator(filename):
         Function -- filename_validator
             Checks that a filename is not just ".txt".
         Parameter:
-            filename -- a filename to check
+            filename -- A filename to check
         Raises:
             ValueError -- If the filename is just ".txt".
         Returns:
@@ -205,11 +205,23 @@ def filename_validator(filename):
 
 
 def create_content_lst(recipe_name, ingred_lst, entered_time, direction):
+    '''
+        Function -- create_content_lst
+            Creates a list of content in the required format based on the
+            user's input.
+        Parameters:
+            recipe_name -- The recipe name that the user enters
+            ingred_lst -- The list of ingredients
+            entered_time -- The time that the user enters
+            direction -- The direction that the user enters
+        Returns:
+            A list of content in the required format.
+    '''
     NEWLINE = "\n"
     INGRED_SUBTITLE = "Ingredients:"
     DIRECTION_SUBTITLE = "Directions:"
 
-    time_content = "Time: %d minutes" % entered_time
+    time_content = "Time: " + entered_time + " minutes"
     content_lst = []
     content_lst.append(recipe_name + NEWLINE)
     content_lst.append(NEWLINE)
@@ -225,11 +237,28 @@ def create_content_lst(recipe_name, ingred_lst, entered_time, direction):
 
 
 def write_recipe(content, filename):
+    '''
+        Function -- write_recipe
+            Writes a recipe to a file.
+        Parameters:
+            content -- A list of content to write
+            filename -- A string file path
+        Returns:
+            None. This function does not return.
+    '''
     with open(filename, "w") as file:
         file.writelines(content)
 
 
 def read_recipe(path):
+    '''
+        Function -- read_recipe
+            Reads the entire file of a recipe.
+        Parameter:
+            path -- A string file path
+        Returns:
+            The whole content of recipe in the file.
+    '''
     file = open(path, "r")
     content = file.read()
     file.close()
