@@ -48,7 +48,7 @@ def test_create_filename():
     assert(create_filename("_tomato_soup_") == "_tomato_soup_.txt")
 
 
-def filename_validator():
+def test_filename_validator():
     with raises(ValueError):
         filename_validator(".txt")
 
