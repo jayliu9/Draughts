@@ -1,3 +1,11 @@
+'''
+Name: Shijie Liu
+NUID: 001561546
+Course Number: 18533
+Semester: Fall 2020
+
+This code is for drawing a nested star with Turtle.
+'''
 import turtle
 LINES_OF_STAR = 5
 
