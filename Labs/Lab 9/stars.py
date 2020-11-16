@@ -9,10 +9,11 @@ This code is for drawing a nested star with Turtle.
 import turtle
 LINES_OF_STAR = 5
 
+
 def draw_star(turt, initial_len, increase):
     '''
         Function -- draw_star
-            Draw a single star with the length of each of its lines increasing.
+            Draws a single star with the length of each of its lines increasing.
         Parameters:
             turt -- an instance of Turtle
             initial_len -- the initial length of the star
