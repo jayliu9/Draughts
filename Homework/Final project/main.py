@@ -53,7 +53,20 @@ def click_handler(x, y):
 
 
 def click_validator(x, y):
-
+    '''
+        Function -- click_validation
+            Checks that the click was in bounds of the board.
+        Parameters:
+            x -- X coordinate of the click. Automatically provided by Turtle.
+            y -- Y coordinate of the click. Automatically provided by Turtle.
+        Raises:
+            ValueError -- If the click was out of bounds of the board.
+        Returns:
+            Nothing
+    '''
+    out_of_bounds = x < CORNER or x > -CORNER or y > -CORNER or y < CORNER
+    if out_of_bounds:
+        raise ValueError
 
 
 def draw_circle(a_turtle, radius):
