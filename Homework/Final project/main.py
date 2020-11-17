@@ -13,6 +13,7 @@ SQUARE = 50
 BOARD_SIZE = NUM_SQUARES * SQUARE
 CORNER = -BOARD_SIZE / 2
 
+
 def draw_square(a_turtle, size):
     '''
         Function -- draw_square
@@ -86,9 +87,42 @@ def draw_circle(a_turtle, radius):
     a_turtle.penup()
 
 
+def black_pieces_starting_row(row):
+    '''
+        Function -- black_pieces_starting_row
+            Checks if the row is the starting position of black pieces, which 
+            is from the bottom row of the board to row 2 (the bottom row of the 
+            board is counted row 0).
+        Parameters:
+            row -- the row number
+        Returns:
+            True if the row is one of the starting row of black pieces, False
+            otherwise.
+    '''
+    LOWEREST_BLACK_STARTING_ROW = 0
+    HIGHEST_BLACK_STARTING_ROW = 2
+    return (row <= HIGHEST_BLACK_STARTING_ROW and
+            row >= LOWEREST_BLACK_STARTING_ROW)
+
+
+def red_pieces_starting_row(row):
+    '''
+        Function -- red_pieces_starting_row
+            Checks if the row is the starting position of red pieces, which is
+            from the top row of the board to row 5 (the bottom row of the board
+            is counted row 0).
+        Parameters:
+            row -- the row number
+        Returns:
+            True if the row is one of the starting row of red pieces, False
+            otherwise.
+    '''
+    LOWEREST_RED_STARTING_ROW = 5
+    HIGHEST_RED_STARTING_ROW = 7
+    return row >= LOWEREST_RED_STARTING_ROW and row <= HIGHEST_RED_STARTING_ROW
+
+
 def main():
-    UPPERMOST_BLACK_PIECE_ROW = 2
-    DOWNMOST_RED_PIECE_ROW = 5
     CIRCLE_RADIUS = 0.5 * SQUARE
     SQUARE_COLORS = ("light gray", "white")
     PIECE_COLORS = ("black", "red")
@@ -104,21 +138,18 @@ def main():
     pen.hideturtle()
 
     pen.color("black", "white")
-
-    # Step 1 - the board outline
     pen.setposition(CORNER, CORNER)
     draw_square(pen, BOARD_SIZE)
 
-    # Step 2 & 3 - the checkerboard squares and pieces
     for col in range(NUM_SQUARES):
         for row in range(NUM_SQUARES):
             if col % 2 != row % 2:
                 pen.color("black", SQUARE_COLORS[0])
                 pen.setposition(CORNER + SQUARE * col, CORNER + SQUARE * row)
                 draw_square(pen, SQUARE)
-                if (row <= UPPERMOST_BLACK_PIECE_ROW or
-                    row >= DOWNMOST_RED_PIECE_ROW):
-                    if row <= UPPERMOST_BLACK_PIECE_ROW:
+                if (black_pieces_starting_row(row) or
+                    red_pieces_starting_row(row)):
+                    if black_pieces_starting_row(row):
                         pen.color(PIECE_COLORS[0], PIECE_COLORS[0])
                     else:
                         pen.color(PIECE_COLORS[1], PIECE_COLORS[1])
