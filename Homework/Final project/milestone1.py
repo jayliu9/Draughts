@@ -13,7 +13,6 @@ SQUARE = 50
 BOARD_SIZE = NUM_SQUARES * SQUARE
 CORNER = -BOARD_SIZE / 2
 
-
 def draw_square(a_turtle, size):
     '''
         Function -- draw_square
@@ -46,7 +45,15 @@ def click_handler(x, y):
             of function automatically called by Turtle. You will not have
             access to anything returned by this function.
     '''
-    print("Clicked at ", x, y)
+    try:
+        click_validator(x, y)
+        print("Clicked at", x, y)
+    except:
+        print("Clicked out of range")
+
+
+def click_validator(x, y):
+
 
 
 def draw_circle(a_turtle, radius):
