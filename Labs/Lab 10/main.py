@@ -31,8 +31,6 @@ def main():
 
     channels = [channel1, channel2]
 
-
-
     print(searcher(channels, actor1))
 
 
