@@ -9,7 +9,6 @@ This code is an actor class
 
 
 class Actor:
-    def __init__(self, firstname, lastname, shows):
+    def __init__(self, firstname, lastname):
         self.firstname = firstname
         self.lastname = lastname
-        self.shows = shows

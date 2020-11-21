@@ -12,3 +12,6 @@ class Show:
     def __init__(self, title, members):
         self.title = title
         self.members = members
+
+    def contains_actor(self, actor):
+        return actor in self.members

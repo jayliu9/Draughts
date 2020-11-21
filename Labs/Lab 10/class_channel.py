@@ -13,3 +13,10 @@ class Channel:
         self.name = name
         self.number = number
         self.shows = shows
+
+    def get_shows_by_actor(self, actor):
+        new_list = []
+        for each in self.shows:
+            if each.contains_actor(actor):
+                new_list.append(each.title)
+        return new_list
