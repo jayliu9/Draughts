@@ -37,7 +37,7 @@ class Channel:
             Method -- get_shows_by_actor
                 Gets the list of shows broadcast on the channel which starring
                 the given actor. 
-            Parameter:
+            Parameters:
                 self -- The current Channel object
                 actor -- An Actor object
             Returns:
@@ -49,3 +49,40 @@ class Channel:
             if each.contains_actor(actor):
                 new_list.append(each.title)
         return new_list
+
+    def contains_show(self, show):
+        '''
+            Method -- contains_show
+                Checks if the given show is broadcast on the channel.
+            Parameters:
+                self -- The current Channel object
+                actor -- An Show object
+            Returns:
+                True if the show is broadcast on the channel, False otherwise.
+        '''
+        return show in self.shows
+
+    def get_channel_info(self):
+        '''
+            Method -- get_channel_info
+                Gets the information of the channel.
+            Parameters:
+                self -- The current Channel object
+            Returns:
+                The information of the channel.
+        '''
+        SUBTITLE = "Channel information: "
+        NAME = "Name: "
+        NUMBER = "Number: "
+        SHOWS = "Shows: "
+        NEW_LINE = "\n"
+        show_lst = []
+        for show in self.shows:
+            show_lst.append(show.title)
+
+        msg = (SUBTITLE + NEW_LINE + NAME + self.name + NEW_LINE + NUMBER +
+               str(self.number) + NEW_LINE + SHOWS + str(show_lst))
+        return msg
+               
+        
+        

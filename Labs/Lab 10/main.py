@@ -12,11 +12,39 @@ from class_show import Show
 from class_channel import Channel
 
 
-def searcher(channel_lst, actor):
+def get_show_lst_by_actor(channel_lst, actor):
+    '''
+        Function -- get_show_lst_by_actor
+            Searchs all channels for shows starring a particular actor.
+        Parameters:
+            channel_lst -- All available channels
+            actor -- An Actor object
+        Returns:
+            The list of shows starring a partcular actor.
+    '''
     show_lst = []
     for item in channel_lst:
         show_lst += item.get_shows_by_actor(actor)
     return show_lst
+
+
+def get_channel_by_show(channel_lst, show):
+    '''
+        Function -- get_channel_by_show
+            Gets channel information for a particular show.
+        Parameters:
+            channel_lst -- All available channels
+            actor -- An Show object
+        Returns:
+            The channel information for a particular show.
+    '''
+    WARNING = "No result"
+
+    info = WARNING
+    for channel in channel_lst:
+        if channel.contains_show(show):
+            info = channel.get_channel_info()
+    return info
 
 
 def main():
@@ -31,7 +59,9 @@ def main():
 
     channels = [channel1, channel2]
 
-    print(searcher(channels, actor1))
+    print(get_show_lst_by_actor(channels, actor2))
+    print(get_channel_by_show(channels, show2))
+ 
 
 
 if __name__ == "__main__":

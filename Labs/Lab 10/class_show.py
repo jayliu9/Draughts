@@ -32,10 +32,12 @@ class Show:
         '''
             Method -- contains_actor
                 Checks if the given actor is in the show's cast list.
-            Parameter:
+            Parameters:
                 self -- The current Show object
                 actor -- An Actor object
             Returns:
                 True if the actor is in the show's cast list, False otherwise.
         '''
         return actor in self.members
+
+    
