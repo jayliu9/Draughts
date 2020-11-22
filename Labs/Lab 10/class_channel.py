@@ -16,6 +16,13 @@ class Channel:
             name -- The name of the channel.
             number -- The number of the channel.
             shows -- The shows broadcast on the channel.
+            schedule -- The daily schedule of the shows on the channel.
+        Methods:
+            get_shows_by_actor -- Gets the list of shows broadcast on the
+            channel which starring the given actor.
+            contains_show -- Checks if the given show is broadcast on the
+            channel.
+            get_channel_info -- Gets the information of the channel.
     '''
 
     def __init__(self, name, number, shows, schedule):
@@ -58,7 +65,7 @@ class Channel:
                 Checks if the given show is broadcast on the channel.
             Parameters:
                 self -- The current Channel object
-                actor -- An Show object
+                show -- An Show object
             Returns:
                 True if the show is broadcast on the channel, False otherwise.
         '''

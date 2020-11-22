@@ -34,7 +34,7 @@ def get_channel_by_show(channel_lst, show):
             Gets channel information for a particular show.
         Parameters:
             channel_lst -- All available channels
-            actor -- An Show object
+            show -- An Show object
         Returns:
             The channel information for a particular show.
     '''
@@ -48,13 +48,22 @@ def get_channel_by_show(channel_lst, show):
 
 
 def get_shows_by_day(channel_lst, day):
+    '''
+        Function -- get_shows_by_day
+            Gets all shows playing on a particular day across all channels.
+        Parameters:
+            channel_lst -- All available channels
+            day -- An day of a week
+        Returns:
+            The list of all shows playing on a particular day across all
+            channels.
+    '''
     new_list = []
     for channel in channel_lst:
         if day in channel.schedule.keys():
             new_list += channel.schedule[day]
     return new_list
 
-            
 
 def main():
     actor1 = Actor("Actor", "1")

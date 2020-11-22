@@ -15,7 +15,11 @@ class Show:
         Attributes:
             title -- The title of the show.
             members -- The cast members of the show.
+        Methods:
+            contains_actor -- Checks if the given actor is in the show's cast
+            list.
     '''
+
     def __init__(self, title, members):
         '''
             Constructor -- __init__
@@ -39,5 +43,3 @@ class Show:
                 True if the actor is in the show's cast list, False otherwise.
         '''
         return actor in self.members
-
-    

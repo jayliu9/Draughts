@@ -13,8 +13,8 @@ class Actor:
         Class -- Actor
             Represents an actor.
         Attributes:
-            last name -- The last name of the actor.
-            first name -- The first name of the actor.
+            lastname -- The last name of the actor.
+            firstname -- The first name of the actor.
     '''
 
     def __init__(self, firstname, lastname):
