@@ -47,6 +47,15 @@ def get_channel_by_show(channel_lst, show):
     return info
 
 
+def get_shows_by_day(channel_lst, day):
+    new_list = []
+    for channel in channel_lst:
+        if day in channel.schedule.keys():
+            new_list += channel.schedule[day]
+    return new_list
+
+            
+
 def main():
     actor1 = Actor("Actor", "1")
     actor2 = Actor("Actor", "2")
@@ -54,15 +63,20 @@ def main():
     show1 = Show("Monday Show", [actor1, actor2])
     show2 = Show("Tuesday Show", [actor1, actor2, actor3])
     show3 = Show("Friday Show", [actor2, actor3])
-    channel1 = Channel("DEF", 42, [show1])
-    channel2 = Channel("XYZ", 31, [show2, show3])
+    schedule1 = {"Monday": [show1]}
+    channel1 = Channel("DEF", 42, [show1], schedule1)
+    schedule2 = {"Tuesday": [show2], "Friday": [show3]}
+    channel2 = Channel("XYZ", 31, [show2, show3], schedule2)
 
     channels = [channel1, channel2]
-
-    print(get_show_lst_by_actor(channels, actor2))
+    for item in get_show_lst_by_actor(channels, actor2):
+        print(item.title)
+    print("")
     print(get_channel_by_show(channels, show2))
+    print("")
+    for item in get_shows_by_day(channels, "Tuesday"):
+        print(item.title)
  
-
 
 if __name__ == "__main__":
     main()

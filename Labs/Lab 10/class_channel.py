@@ -18,7 +18,7 @@ class Channel:
             shows -- The shows broadcast on the channel.
     '''
 
-    def __init__(self, name, number, shows):
+    def __init__(self, name, number, shows, schedule):
         '''
             Constructor -- __init__
                 Creates a new instance of Actor
@@ -27,10 +27,12 @@ class Channel:
                 name -- The name of the channel.
                 number -- The number of the channel.
                 shows -- The shows broadcast on the channel.
+                schedule -- The daily schedule of the shows on the channel.
         '''
         self.name = name
         self.number = number
         self.shows = shows
+        self.schedule = schedule
 
     def get_shows_by_actor(self, actor):
         '''
@@ -47,7 +49,7 @@ class Channel:
         new_list = []
         for each in self.shows:
             if each.contains_actor(actor):
-                new_list.append(each.title)
+                new_list.append(each)
         return new_list
 
     def contains_show(self, show):
@@ -83,6 +85,3 @@ class Channel:
         msg = (SUBTITLE + NEW_LINE + NAME + self.name + NEW_LINE + NUMBER +
                str(self.number) + NEW_LINE + SHOWS + str(show_lst))
         return msg
-               
-        
-        
