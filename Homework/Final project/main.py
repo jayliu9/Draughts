@@ -121,6 +121,19 @@ def red_pieces_starting_row(row):
     HIGHEST_RED_STARTING_ROW = 7
     return row >= LOWEREST_RED_STARTING_ROW and row <= HIGHEST_RED_STARTING_ROW
 
+def calculates_index(x, y):
+    col = calculates_col(x)
+    row = calculates_row(y)
+    return [col, row]
+
+
+def calculates_col(x):
+    return (x - CORNER) // SQUARE
+
+
+def calculates_row(y):
+    return (y - CORNER) // SQUARE
+
 
 def main():
     CIRCLE_RADIUS = 0.5 * SQUARE
