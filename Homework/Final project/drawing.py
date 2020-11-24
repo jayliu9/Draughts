@@ -89,60 +89,68 @@ class DrawingUI:
             self.pen.left(RIGHT_ANGLE)
         self.pen.penup()
     
-    def choosing_notation(self, col, row, valid_moves):
+    def choosing_notation(self, row, col, valid_moves):
         CHOOSING_COLOR = "green"
         ORIGINAL_COLOR = "black"
         HINT_COLOR = "red"
 
-        self.pen.setposition(CORNER + col * SQUARE, CORNER + row * SQUARE)
+        self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
         self.pen.color(CHOOSING_COLOR)
-        draws_nonfilled_square(self.pen, SQUARE)
+        self.draws_nonfilled_square(self.SQUARE)
 
         self.pen.color(HINT_COLOR)
         for move in valid_moves:
-            next_col = move[0]
-            next_row = move[1]
-            self.pen.setposition(CORNER + next_col * SQUARE,
-                                CORNER + next_row * SQUARE)
-            draws_nonfilled_square(self.pen, SQUARE)
+            next_row = move[0]
+            next_col = move[1]
+            self.pen.setposition(self.CORNER + next_col * self.SQUARE,
+                                 self.CORNER + next_row * self.SQUARE)
+            self.draws_nonfilled_square(self.SQUARE)
         self.pen.color(ORIGINAL_COLOR)
 
+    def remove_notation(self, row, col):
+        self.pen.color("black", self.SQUARE_COLORS[0])
+        self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
+        self.draw_square(self.SQUARE)
+
     def move_piece(self, current_color, piece_location, new_location):
-        pre_col = piece_location[0]
-        pre_row = piece_location[1]
-        post_col = new_location[0]
-        post_row = new_location[1]
-        self.pen.color("black", SQUARE_COLORS[0])
-        self.pen.setposition(CORNER + SQUARE * pre_col,
-                            CORNER + SQUARE * pre_row)
-        self.draw_square(self.pen, SQUARE)
+        pre_row = piece_location[0]
+        pre_col = piece_location[1]
+        post_row = new_location[0]
+        post_col = new_location[1]
+        self.pen.color("black", self.SQUARE_COLORS[0])
+        self.pen.setposition(self.CORNER + self.SQUARE * pre_col,
+                             self.CORNER + self.SQUARE * pre_row)
+        self.draw_square(self.SQUARE)
         self.pen.color(current_color, current_color)
-        self.pen.setposition(CORNER + SQUARE * post_col + CIRCLE_RADIUS,
-                             CORNER + SQUARE * post_row)
-        self.draw_circle(self.pen, CIRCLE_RADIUS)
+        self.pen.setposition(self.CORNER + self.SQUARE * post_col + self.CIRCLE_RADIUS,
+                             self.CORNER + self.SQUARE * post_row)
+        self.draw_circle(self.CIRCLE_RADIUS)
 
     def initial_board(self):
-        turtle.setup(WINDOW_SIZE, WINDOW_SIZE)
-        turtle.screensize(BOARD_SIZE, BOARD_SIZE)
+        turtle.setup(self.WINDOW_SIZE, self.WINDOW_SIZE)
+        turtle.screensize(self.BOARD_SIZE, self.BOARD_SIZE)
         turtle.bgcolor("white")
         turtle.tracer(0, 0)
 
         self.pen = turtle.Turtle()
         self.pen.penup()
         self.pen.hideturtle()
+        self.pen.color("black", "white")
+        self.pen.setposition(self.CORNER, self.CORNER)
+        self.draw_square(self.BOARD_SIZE)
 
-        for col in range(NUM_SQUARES):
-            for row in range(NUM_SQUARES):
+        for col in range(self.NUM_SQUARES):
+            for row in range(self.NUM_SQUARES):
                 if col % 2 != row % 2:
-                    self.pen.color("black", SQUARE_COLORS[0])
-                    self.pen.setposition(CORNER + SQUARE * col, CORNER + SQUARE * row)
-                    self.draw_square(self.pen, SQUARE)
+                    self.pen.color("black", self.SQUARE_COLORS[0])
+                    self.pen.setposition(self.CORNER + self.SQUARE * col, self.CORNER + self.SQUARE * row)
+                    self.draw_square(self.SQUARE)
                     if (self.black_pieces_starting_row(row) or
                         self.red_pieces_starting_row(row)):
                         if self.black_pieces_starting_row(row):
-                            self.pen.color(PIECE_COLORS[0], PIECE_COLORS[0])
+                            self.pen.color(self.PIECE_COLORS[0], self.PIECE_COLORS[0])
                         else:
-                            self.pen.color(PIECE_COLORS[1], PIECE_COLORS[1])
-                        self.pen.setposition(CORNER + SQUARE * col + CIRCLE_RADIUS,
-                                        CORNER + SQUARE * row)
-                        self.draw_circle(self.pen, CIRCLE_RADIUS)
+                            self.pen.color(self.PIECE_COLORS[1], self.PIECE_COLORS[1])
+                        self.pen.setposition(self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS,
+                                             self.CORNER + self.SQUARE * row)
+                        self.draw_circle(self.CIRCLE_RADIUS)

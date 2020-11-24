@@ -12,13 +12,11 @@ from drawing import DrawingUI
 import turtle
 NUM_SQUARES = 8
 SQUARE = 50
-BOARD_SIZE = NUM_SQUARES * SQUARE
-CORNER = -BOARD_SIZE / 2
 SQUARE_COLORS = ("light gray", "white")
 PIECE_COLORS = ("black", "red")
-TURN_STARTED = 0
-PIECE_SELECTED = 1
-MOVE_SELECTED = 2
+TURN_STARTED = 2
+PIECE_SELECTED = 0
+MOVE_SELECTED = 1
 EMPTY = ""
 BLACK = "b"
 RED = "r"
@@ -38,33 +36,33 @@ def click_handler(x, y):
             of function automatically called by Turtle. You will not have
             access to anything returned by this function.
     '''
-    try:
-        #click_validator(x, y)
-        #print("Clicked at", x, y)
-        index_lst = calculates_index(x, y)
-        col = index_lst[0]
-        row = index_lst[1]
-        if game_state.stage == TURN_STARTED:
-            if game_state.contains_cur_piece:
-                game_state.changes_stage()
-        elif game_state.stage == PIECE_SELECTED:
-            game_state.ready_to_move(col, row)
-            game_state.psb_noncpt_move(col, row)
-            board_ui.choosing_notation(col, row, game_state.valid_moves)
+    print("Clicked at", x, y)
+    index_lst = calculates_index(x, y)
+    row = index_lst[0]
+    col = index_lst[1]
+    print(game_state.stage)
+    #if is_psb_move(row, col, game_state.valid_moves):
+        #game_state.changes_stage()
+    if game_state.stage == PIECE_SELECTED:
+        print(row, col)
+        if game_state.contains_cur_piece(row, col):
+            game_state.ready_to_move(row, col)
+            game_state.psb_noncpt_move(row, col, game_state.current_player)
+            board_ui.choosing_notation(row, col, game_state.valid_moves)
             game_state.changes_stage()
-        elif game_state.stge == MOVE_SELECTED:
-            if is_psb_move(col, row, game_state.valid_moves):
-                game_state.after_move(col, row)
-                pre_location = game_state.clicks[0]
-                new_location = game_state.clicks[1]
-                if game_state.current_player == BLACK:
-                    board_ui.move_piece("black", pre_location, new_location)
-                else:
-                    board_ui.move_piece("red", pre_location, new_location)
-
-    except:
-        print("Clicked out of range")
-
+    elif game_state.stage == MOVE_SELECTED:
+        if is_psb_move(row, col, game_state.valid_moves):
+            for move in game_state.valid_moves:
+                board_ui.remove_notation(move[0], move[1])
+            game_state.after_move(row, col)
+            pre_location = game_state.clicks[0]
+            new_location = game_state.clicks[1]
+            if game_state.current_player == BLACK:
+                board_ui.move_piece("black", pre_location, new_location)
+            else:
+                board_ui.move_piece("red", pre_location, new_location)
+            game_state.switches_turn()
+            game_state.changes_stage()
 
 def click_validator(x, y):
     '''
@@ -78,43 +76,40 @@ def click_validator(x, y):
         Returns:
             Nothing
     '''
-    out_of_bounds = x < CORNER or x > -CORNER or y > -CORNER or y < CORNER
+    out_of_bounds = x < board_ui.CORNER or x > -board_ui.CORNER or y > -board_ui.CORNER or y < board_ui.CORNER
     if out_of_bounds:
         raise ValueError
 
 
 def calculates_index(x, y):
+    print(board_ui.CORNER)
     col = calculates_col(x)
     row = calculates_row(y)
-    return [col, row]
+    return [int(row), int(col)]
 
 
 def calculates_col(x):
-    return (x - CORNER) // SQUARE
+    return (x - board_ui.CORNER) // board_ui.SQUARE
 
 
 def calculates_row(y):
-    return (y - CORNER) // SQUARE
+    return (y - board_ui.CORNER) // board_ui.SQUARE
 
 
-    
-def choose_piece(board_ui, gamestate, col, row):
-    if gamestate.contains_cur_piece(col, row):
-        valid_noncpt_moves = gamestate.psb_noncpt_move(
-            col, row, gamestate.current_player)
-        #choosing_notation(a_turtle, col, row, valid_noncpt_moves)
-    return valid_noncpt_moves
 
+def is_psb_move(row, col, valid_moves):
+    return [row, col] in valid_moves
 
-def is_psb_move(col, row, valid_moves):
-    return [col, row] in valid_moves
-
+def remove_hint(row, col, valid_moves):
+    for move in game_state.valid_moves:
+        board_ui.remove_notation(move[0], move[1])
 
 #def non_cpt_move(a_turtle, gamestate, col, row, valid_moves):
    #if is_psb_move(col, row, valid_moves):
 
         
 def main():
+    ''''
     CIRCLE_RADIUS = 0.5 * SQUARE
     WINDOW_SIZE = BOARD_SIZE + SQUARE
 
@@ -146,7 +141,7 @@ def main():
                     pen.setposition(CORNER + SQUARE * col + CIRCLE_RADIUS,
                                     CORNER + SQUARE * row)
                     draw_circle(pen, CIRCLE_RADIUS)
-
+    '''
     screen = turtle.Screen()
     screen.onclick(click_handler)
     turtle.done()
