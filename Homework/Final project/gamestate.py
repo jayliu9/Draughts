@@ -12,22 +12,30 @@ BOARD_SIZE = NUM_SQUARES * SQUARE
 CORNER = -BOARD_SIZE / 2
 
 class GameState:
-    EMPTY = 0
-    BLACK = 1
-    RED = 2
+    EMPTY = ""
+    BLACK = "b"
+    RED = "r"
     INITIAL_POSITION = [
-        [EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK]
-        [BLACK, EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK, EMPTY]
-        [EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK]
-        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY]
-        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY]
-        [RED, EMPTY, RED, EMPTY, RED, EMPTY, RED, EMPTY]
-        [EMPTY, RED, EMPTY, RED, EMPTY, RED, EMPTY, RED]
+        [EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK],
+        [BLACK, EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK, EMPTY],
+        [EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK],
+        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+        [RED, EMPTY, RED, EMPTY, RED, EMPTY, RED, EMPTY],
+        [EMPTY, RED, EMPTY, RED, EMPTY, RED, EMPTY, RED],
         [RED, EMPTY, RED, EMPTY, RED, EMPTY, RED, EMPTY]
     ]
+    TURN_STARTED = 0
+    PIECE_SELECTED = 1
+    MOVE_SELECTED = 2
+    NUM_OF_STAGE = 3
+
     def __init__(self):
         self.squares = INITIAL_POSITION
         self.current_player = BLACK
+        self.stage = TURN_STARTED
+        self.clicks = [EMPTY, EMPTY]
+        self.valid_moves = None
 
     def contains_any_piece(self, col, row):
         return self.squares[col][row] != EMPTY
@@ -45,15 +53,25 @@ class GameState:
             forward = row + 1
         else:
             forward = row - 1
-        psb_position = [[left, forward], [right, forward]]
-        for i, position in enumerate(psb_position):
+        self.valid_moves = [[left, forward], [right, forward]]
+        for i, position in enumerate(self.valid_moves):
             if (self.out_of_index(position[0], position[1]) or
                 self.contains_any_piece(position[0], position[1])):
-                psb_position.pop(i)
-        return psb_position
+                self.valid_moves.pop(i)
 
     def after_move(self, col, row):
         self.squares[col][row] = self.current_player
+        self.move_occurs(col, row)
 
     def ready_to_move(self, col, row):
         self.squares[col][row] = EMPTY
+        self.selection_occurs(col, row)
+
+    def changes_stage(self):
+        self.stage = (self.stage + 1) % NUM_OF_STAGE
+    
+    def selection_occurs(self, col, row):
+        self.clicks[0] = [col, row]
+
+    def move_occurs(self, col, row):
+        self.clicks[1] = [col, row]
