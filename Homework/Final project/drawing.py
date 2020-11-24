@@ -1,3 +1,11 @@
+'''
+Name: Shijie Liu
+NUID: 001561546
+Course Number: 18533
+Semester: Fall 2020
+
+This code is drawing UI class.
+'''
 import turtle
 
 class DrawingUI:
@@ -8,14 +16,15 @@ class DrawingUI:
     SQUARE_COLORS = ("light gray", "white")
     PIECE_COLORS = ("black", "red")
     CIRCLE_RADIUS = 0.5 * SQUARE
-    WINDOW_SIZE = BOARD_SIZE + SQUARE
+    WINDOW_SIZE = BOARD_SIZE + 4 * SQUARE
 
     def __init__(self):
         self.initial_board()
+        self.black_turn_notion()
 
     def draw_square(self, size):
         '''
-            Function -- draw_square
+            Method -- draw_square
                 Draw a square of a given size.
             Parameters:
                 a_turtle -- an instance of Turtle
@@ -34,7 +43,7 @@ class DrawingUI:
 
     def draw_circle(self, radius):
         '''
-            Function -- draw_circle
+            Method -- draw_circle
                 Draw a circle with a given radius.
             Parameters:
                 a_turtle -- an instance of Turtle
@@ -50,7 +59,7 @@ class DrawingUI:
     
     def black_pieces_starting_row(self, row):
         '''
-            Function -- black_pieces_starting_row
+            Method -- black_pieces_starting_row
                 Checks if the row is the starting position of black pieces, which 
                 is from the bottom row of the board to row 2 (the bottom row of the 
                 board is counted row 0).
@@ -67,7 +76,7 @@ class DrawingUI:
         
     def red_pieces_starting_row(self, row):
         '''
-            Function -- red_pieces_starting_row
+            Method -- red_pieces_starting_row
                 Checks if the row is the starting position of red pieces, which is
                 from the top row of the board to row 5 (the bottom row of the board
                 is counted row 0).
@@ -90,7 +99,7 @@ class DrawingUI:
         self.pen.penup()
     
     def choosing_notation(self, row, col, valid_moves):
-        CHOOSING_COLOR = "green"
+        CHOOSING_COLOR = "light green"
         ORIGINAL_COLOR = "black"
         HINT_COLOR = "red"
 
@@ -107,10 +116,15 @@ class DrawingUI:
             self.draws_nonfilled_square(self.SQUARE)
         self.pen.color(ORIGINAL_COLOR)
 
-    def remove_notation(self, row, col):
+    def remove_move_mark(self, row, col):
         self.pen.color("black", self.SQUARE_COLORS[0])
         self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
         self.draw_square(self.SQUARE)
+
+    def remove_choice_mark(self, row, col):
+        self.pen.color("black")
+        self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
+        self.draws_nonfilled_square(self.SQUARE)
 
     def move_piece(self, current_color, piece_location, new_location):
         pre_row = piece_location[0]
@@ -154,3 +168,23 @@ class DrawingUI:
                         self.pen.setposition(self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS,
                                              self.CORNER + self.SQUARE * row)
                         self.draw_circle(self.CIRCLE_RADIUS)
+    
+    def notion_frame(self):
+        self.pen.color("black", "white")
+        self.pen.setposition(self.CORNER - 1 * self.SQUARE, self.CORNER + 3.5 * self.SQUARE)
+        self.draw_square(0.5 * self.SQUARE)
+        self.pen.setposition(self.CORNER - 1 * self.SQUARE, 0)
+        self.draw_square(0.5 * self.SQUARE)
+
+    def black_turn_notion(self):
+        self.notion_frame()
+        self.pen.color(self.PIECE_COLORS[0], self.PIECE_COLORS[0])
+        self.pen.setposition(self.CORNER - 1 * self.SQUARE + 0.5 * self.CIRCLE_RADIUS,
+                             self.CORNER + 3.5 * self.SQUARE)
+        self.draw_circle(0.5 * self.CIRCLE_RADIUS)
+    
+    def red_turn_notion(self):
+        self.notion_frame()
+        self.pen.color(self.PIECE_COLORS[1], self.PIECE_COLORS[1])
+        self.pen.setposition(self.CORNER - 1 * self.SQUARE + 0.5 * self.CIRCLE_RADIUS, 0)
+        self.draw_circle(0.5 * self.CIRCLE_RADIUS)

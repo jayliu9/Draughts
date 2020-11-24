@@ -15,6 +15,8 @@ class GameState:
     EMPTY = ""
     BLACK = "b"
     RED = "r"
+    EMPTY_LIST = []
+    INITIAL_CLICK_LIST = [[0, 0], [0, 0]]
     
     INITIAL_POSITION = [
         [EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK, EMPTY, BLACK],
@@ -35,8 +37,8 @@ class GameState:
         self.squares = self.INITIAL_POSITION
         self.current_player = self.BLACK
         self.stage = self.PIECE_SELECTED
-        self.clicks = [self.EMPTY, self.EMPTY]
-        self.valid_moves = []
+        self.clicks = self.INITIAL_CLICK_LIST
+        self.valid_moves = self.EMPTY_LIST
 
     def contains_any_piece(self, row, col):
         return self.squares[row][col] != self.EMPTY
@@ -63,21 +65,19 @@ class GameState:
                 self.contains_any_piece(position[0], position[1])):
                 self.valid_moves.remove(position)
 
-    def after_move(self, row, col):
+    def updates_board(self, row, col):
+        pre_row = self.clicks[0][0]
+        pre_col = self.clicks[0][1]
+        self.squares[pre_row][pre_col] = self.EMPTY
         self.squares[row][col] = self.current_player
-        self.move_occurs(col, row)
 
-    def ready_to_move(self, row, col):
-        self.squares[row][col] = self.EMPTY
-        self.selection_occurs(row, col)
-
-    def changes_stage(self):
-        self.stage = (self.stage + 1) % self.NUM_OF_STAGE
-    
     def selection_occurs(self, row, col):
         self.clicks[0] = [row, col]
 
-    def move_occurs(self, col, row):
+    def changes_stage(self):
+        self.stage = (self.stage + 1) % self.NUM_OF_STAGE
+
+    def move_occurs(self, row, col):
         self.clicks[1] = [row, col]
 
     def switches_turn(self):
@@ -85,3 +85,9 @@ class GameState:
             self.current_player = self.RED
         else:
             self.current_player = self.BLACK
+
+    def reset_moves_lst(self):
+        self.valid_moves = self.EMPTY_LIST
+    
+    def back_pre_stage(self):
+        self.stage = (self.stage - 1) % self.NUM_OF_STAGE

@@ -5,21 +5,11 @@ Course: CS 5001
 Course Number: 18529
 Semester: Fall 2020
 
-The code is the first milestone of the final project
+The code is from first milestone to second milestone of the final project
 '''
 from gamestate import GameState
 from drawing import DrawingUI
 import turtle
-NUM_SQUARES = 8
-SQUARE = 50
-SQUARE_COLORS = ("light gray", "white")
-PIECE_COLORS = ("black", "red")
-TURN_STARTED = 2
-PIECE_SELECTED = 0
-MOVE_SELECTED = 1
-EMPTY = ""
-BLACK = "b"
-RED = "r"
 
 game_state = GameState()
 board_ui = DrawingUI()
@@ -36,33 +26,44 @@ def click_handler(x, y):
             of function automatically called by Turtle. You will not have
             access to anything returned by this function.
     '''
-    print("Clicked at", x, y)
-    index_lst = calculates_index(x, y)
-    row = index_lst[0]
-    col = index_lst[1]
-    print(game_state.stage)
-    #if is_psb_move(row, col, game_state.valid_moves):
-        #game_state.changes_stage()
-    if game_state.stage == PIECE_SELECTED:
-        print(row, col)
-        if game_state.contains_cur_piece(row, col):
-            game_state.ready_to_move(row, col)
-            game_state.psb_noncpt_move(row, col, game_state.current_player)
-            board_ui.choosing_notation(row, col, game_state.valid_moves)
-            game_state.changes_stage()
-    elif game_state.stage == MOVE_SELECTED:
-        if is_psb_move(row, col, game_state.valid_moves):
-            for move in game_state.valid_moves:
-                board_ui.remove_notation(move[0], move[1])
-            game_state.after_move(row, col)
-            pre_location = game_state.clicks[0]
-            new_location = game_state.clicks[1]
-            if game_state.current_player == BLACK:
-                board_ui.move_piece("black", pre_location, new_location)
+    try:
+        click_validator(x, y)
+        print("click at", x, y)
+        index_lst = calculates_index(x, y)
+        row = index_lst[0]
+        col = index_lst[1]
+
+        remove_hint(game_state.clicks[0], game_state.valid_moves)
+        if game_state.stage == game_state.PIECE_SELECTED:
+            if game_state.contains_cur_piece(row, col):
+                game_state.selection_occurs(row, col)
+                game_state.psb_noncpt_move(row, col, game_state.current_player)
+                board_ui.choosing_notation(row, col, game_state.valid_moves)
+                game_state.changes_stage()
+
+        elif game_state.stage == game_state.MOVE_SELECTED:
+            if is_psb_move(row, col, game_state.valid_moves):
+                game_state.move_occurs(row, col)
+                game_state.updates_board(row, col)
+                game_state.reset_moves_lst()
+                pre_location = game_state.clicks[0]
+                new_location = game_state.clicks[1]
+                if game_state.current_player == game_state.BLACK:
+                    board_ui.move_piece("black", pre_location, new_location)
+                else:
+                    board_ui.move_piece("red", pre_location, new_location)
+                game_state.switches_turn()
+                game_state.changes_stage()
+            elif game_state.contains_cur_piece(row, col):
+                game_state.selection_occurs(row, col)
+                game_state.psb_noncpt_move(row, col, game_state.current_player)
+                board_ui.choosing_notation(row, col, game_state.valid_moves)
             else:
-                board_ui.move_piece("red", pre_location, new_location)
-            game_state.switches_turn()
-            game_state.changes_stage()
+                game_state.reset_moves_lst()
+
+        notion_display(game_state.current_player)
+    except:
+        print("out of range")
 
 def click_validator(x, y):
     '''
@@ -82,7 +83,6 @@ def click_validator(x, y):
 
 
 def calculates_index(x, y):
-    print(board_ui.CORNER)
     col = calculates_col(x)
     row = calculates_row(y)
     return [int(row), int(col)]
@@ -100,48 +100,24 @@ def calculates_row(y):
 def is_psb_move(row, col, valid_moves):
     return [row, col] in valid_moves
 
-def remove_hint(row, col, valid_moves):
+
+def remove_hint(chosen_piece, valid_moves):
+    chosen_row = chosen_piece[0]
+    chosen_col = chosen_piece[1]
+    board_ui.remove_choice_mark(chosen_row, chosen_col)
     for move in game_state.valid_moves:
-        board_ui.remove_notation(move[0], move[1])
+        row_to_move = move[0]
+        col_to_move = move[1]
+        board_ui.remove_move_mark(row_to_move, col_to_move)
 
-#def non_cpt_move(a_turtle, gamestate, col, row, valid_moves):
-   #if is_psb_move(col, row, valid_moves):
+def notion_display(current_player):
+    if current_player == game_state.RED:
+        board_ui.red_turn_notion()
+    else:
+        board_ui.black_turn_notion()
 
-        
+
 def main():
-    ''''
-    CIRCLE_RADIUS = 0.5 * SQUARE
-    WINDOW_SIZE = BOARD_SIZE + SQUARE
-
-    turtle.setup(WINDOW_SIZE, WINDOW_SIZE)
-    turtle.screensize(BOARD_SIZE, BOARD_SIZE)
-    turtle.bgcolor("white")
-    turtle.tracer(0, 0)
-
-    pen = turtle.Turtle()
-    pen.penup()
-    pen.hideturtle()
-
-    pen.color("black", "white")
-    pen.setposition(CORNER, CORNER)
-    draw_square(pen, BOARD_SIZE)
-
-    for col in range(NUM_SQUARES):
-        for row in range(NUM_SQUARES):
-            if col % 2 != row % 2:
-                pen.color("black", SQUARE_COLORS[0])
-                pen.setposition(CORNER + SQUARE * col, CORNER + SQUARE * row)
-                draw_square(pen, SQUARE)
-                if (black_pieces_starting_row(row) or
-                    red_pieces_starting_row(row)):
-                    if black_pieces_starting_row(row):
-                        pen.color(PIECE_COLORS[0], PIECE_COLORS[0])
-                    else:
-                        pen.color(PIECE_COLORS[1], PIECE_COLORS[1])
-                    pen.setposition(CORNER + SQUARE * col + CIRCLE_RADIUS,
-                                    CORNER + SQUARE * row)
-                    draw_circle(pen, CIRCLE_RADIUS)
-    '''
     screen = turtle.Screen()
     screen.onclick(click_handler)
     turtle.done()
