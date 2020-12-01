@@ -7,6 +7,8 @@ Semester: Fall 2020
 This code is game state class.
 '''
 from piece import Piece
+from move import Move
+
 
 class GameState:
     NUM_SQUARES = 8
@@ -47,6 +49,7 @@ class GameState:
         self.stage = self.PIECE_SELECTED
         self.clicks = self.INITIAL_CLICK_LIST
         self.valid_moves = self.EMPTY_LIST
+        self.all_possible_move()
 
     def contains_any_piece(self, row, col):
         return self.squares[row][col] != self.EMPTY
@@ -58,20 +61,46 @@ class GameState:
         return (row > self.NUM_SQUARES - 1 or row < 0 or
                 col > self.NUM_SQUARES - 1 or col < 0)
 
+    def psb_noncpt_move(self, row, col):
+        noncpt_move_lst = []
+        piece = self.squares[row][col]
+        for direction in piece.directions:
+            move_row = row + direction[0]
+            move_col = col + direction[1]
+            if not self.contains_any_piece(move_row, move_col):
+                noncpt_move_lst.append(Move([row, col], [move_row, move_col], False))
+        return noncpt_move_lst
+              
+        #self.valid_moves = [[forward, left], [forward, right]]
+        #valid_moves_copy = self.valid_moves.copy()
+        #for position in valid_moves_copy:
+            #if (self.out_of_index(position[0], position[1]) or
+                #self.contains_any_piece(position[0], position[1])):
+                #self.valid_moves.remove(position)
+    
+    def psb_cpt_move(self, row, col):
+        cpt_move_lst = []
+        piece = self.squares[row][col]
+        for direction in piece.directions:
+            move_row = row + direction[0]
+            move_col = col + direction[1]
+            contains_enemy = self.contains_any_piece(row, col) and not self.contains_cur_piece(row, col)
+            if contains_enemy:
+                next_row = row + direction[0]
+                next_col = col + direction[1]
+                if not self.out_of_index(next_row, next_col) and not self.contains_any_piece(next_row, next_col):
+                    cpt_move_lst.append(Move([row, col], [next_row, next_col], True))
+        return cpt_move_lst
 
-    def psb_noncpt_move(self, row, col, turn):
-        left = col - 1
-        right = col + 1
-        if turn == self.BLACK:
-            forward = row + 1
-        else:
-            forward = row - 1
-        self.valid_moves = [[forward, left], [forward, right]]
-        valid_moves_copy = self.valid_moves.copy()
-        for position in valid_moves_copy:
-            if (self.out_of_index(position[0], position[1]) or
-                self.contains_any_piece(position[0], position[1])):
-                self.valid_moves.remove(position)
+    def all_possible_move(self):
+        move_lst = []
+        for row in range(self.NUM_SQUARES):
+            for col in range(self.NUM_SQUARES):
+                move_lst = self.psb_noncpt_move(row, col) + move_lst
+                move_lst = move_lst + self.psb_cpt_move(row, col)
+        self.all_move_lst = move_lst
+
+                
 
     def updates_board(self, row, col):
         pre_row = self.clicks[0][0]
