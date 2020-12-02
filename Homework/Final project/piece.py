@@ -8,7 +8,18 @@ Semester: Fall 2020
 The code is piece class.
 '''
 class Piece:
-    def __init__(self, color, directions):
+    def __init__(self, color):
         self.color = color
-        self.directions = directions
+        self.initial_direction()
         self.is_king = False
+
+    def initial_direction(self):
+        BLACK = "b"
+        RED = "r"
+        B_RGL_DIRECTION = [[1, -1], [1, 1]]
+        R_RGL_DIRECTION = [[-1, -1], [-1, 1]]
+
+        if self.color == BLACK:
+            self.directions = B_RGL_DIRECTION
+        else:
+            self.directions = R_RGL_DIRECTION

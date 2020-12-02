@@ -26,44 +26,43 @@ def click_handler(x, y):
             of function automatically called by Turtle. You will not have
             access to anything returned by this function.
     '''
-    try:
-        click_validator(x, y)
-        print("click at", x, y)
-        index_lst = calculates_index(x, y)
-        row = index_lst[0]
-        col = index_lst[1]
+    #try:
+    click_validator(x, y)
+    print("click at", x, y)
+    index_lst = calculates_index(x, y)
+    row = index_lst[0]
+    col = index_lst[1]
+    remove_hint(game_state.clicks[0], game_state.valid_moves)
+    if game_state.stage == game_state.PIECE_SELECTED:
+        if game_state.contains_cur_piece(row, col):
+            game_state.selection_occurs(row, col)
+            game_state.a_piece_move(row, col)
+            board_ui.choosing_notation(row, col, game_state.valid_moves)
+            game_state.changes_stage()
 
-        remove_hint(game_state.clicks[0], game_state.valid_moves)
-        if game_state.stage == game_state.PIECE_SELECTED:
-            if game_state.contains_cur_piece(row, col):
-                game_state.selection_occurs(row, col)
-                game_state.psb_noncpt_move(row, col, game_state.current_player)
-                board_ui.choosing_notation(row, col, game_state.valid_moves)
-                game_state.changes_stage()
-
-        elif game_state.stage == game_state.MOVE_SELECTED:
-            if is_psb_move(row, col, game_state.valid_moves):
-                game_state.move_occurs(row, col)
-                game_state.updates_board(row, col)
-                game_state.reset_moves_lst()
-                pre_location = game_state.clicks[0]
-                new_location = game_state.clicks[1]
-                if game_state.current_player == game_state.BLACK:
-                    board_ui.move_piece("black", pre_location, new_location)
-                else:
-                    board_ui.move_piece("red", pre_location, new_location)
-                game_state.switches_turn()
-                game_state.changes_stage()
-            elif game_state.contains_cur_piece(row, col):
-                game_state.selection_occurs(row, col)
-                game_state.psb_noncpt_move(row, col, game_state.current_player)
-                board_ui.choosing_notation(row, col, game_state.valid_moves)
+    elif game_state.stage == game_state.MOVE_SELECTED:
+        if is_psb_move(row, col, game_state.valid_moves):
+            game_state.move_occurs(row, col)
+            game_state.updates_board(row, col)
+            game_state.reset_moves_lst()
+            pre_location = game_state.clicks[0]
+            new_location = game_state.clicks[1]
+            if game_state.current_player == game_state.BLACK:
+                board_ui.move_piece("black", pre_location, new_location)
             else:
-                game_state.reset_moves_lst()
+                board_ui.move_piece("red", pre_location, new_location)
+            game_state.switches_turn()
+            game_state.changes_stage()
+        elif game_state.contains_cur_piece(row, col):
+            game_state.selection_occurs(row, col)
+            game_state.psb_noncpt_move(row, col)
+            board_ui.choosing_notation(row, col, game_state.valid_moves)
+        else:
+            game_state.reset_moves_lst()
 
-        notion_display(game_state.current_player)
-    except:
-        print("out of range")
+    notion_display(game_state.current_player)
+    #except:
+        #print("out of range")
 
 def click_validator(x, y):
     '''

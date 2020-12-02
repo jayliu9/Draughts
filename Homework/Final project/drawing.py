@@ -140,6 +140,20 @@ class DrawingUI:
                              self.CORNER + self.SQUARE * post_row)
         self.draw_circle(self.CIRCLE_RADIUS)
 
+    def cpt_move_piece(self, current_color, piece_location, new_location):
+        MIDDLE = 0.5
+
+        self.pen.color(current_color, current_color)
+        self.move_piece(current_color, piece_location, new_location)
+        self.pen.color("black", self.SQUARE_COLORS[0])
+
+        removed_row = (piece_location[0] + new_location[0]) * MIDDLE
+        removed_col = (piece_location[1] + new_location[1]) * MIDDLE
+        self.pen.color("black", self.SQUARE_COLORS[0])
+        self.pen.setposition(self.CORNER + self.SQUARE * removed_row,
+                             self.CORNER + self.SQUARE * removed_col)
+        self.draw_square(self.SQUARE)
+
     def initial_board(self):
         turtle.setup(self.WINDOW_SIZE, self.WINDOW_SIZE)
         turtle.screensize(self.BOARD_SIZE, self.BOARD_SIZE)
