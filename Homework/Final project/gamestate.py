@@ -41,13 +41,11 @@ class GameState:
         self.current_player = self.BLACK
         self.stage = self.PIECE_SELECTED
         self.clicks = self.INITIAL_CLICK_LIST
-        self.initialize_valid_move_lst()
+        self.valid_moves = self.EMPTY_LIST
         self.all_pieces_move()
 
     def contains_any_piece(self, row, col):
-        if not self.out_of_index(row, col):
-            return self.squares[row][col] != self.EMPTY
-        return False
+        return self.squares[row][col] != self.EMPTY
 
     def contains_cur_piece(self, row, col):
         if self.contains_any_piece(row, col):
@@ -64,7 +62,7 @@ class GameState:
         for direction in piece.directions:
             move_row = row + direction[0]
             move_col = col + direction[1]
-            if not self.contains_any_piece(move_row, move_col):
+            if not self.out_of_index(move_row, move_col) and not self.contains_any_piece(move_row, move_col):
                 noncpt_move_lst.append(Move([row, col], [move_row, move_col], False))
         return noncpt_move_lst
               
@@ -81,19 +79,19 @@ class GameState:
         for direction in piece.directions:
             move_row = row + direction[0]
             move_col = col + direction[1]
-            contains_enemy = self.contains_any_piece(row, col) and not self.contains_cur_piece(row, col)
+            contains_enemy = not self.out_of_index(move_row, move_col) and self.contains_any_piece(move_row, move_col) and not self.contains_cur_piece(move_row, move_col)
             if contains_enemy:
-                next_row = row + direction[0]
-                next_col = col + direction[1]
-                if not self.contains_any_piece(next_row, next_col):
+                next_row = move_row + direction[0]
+                next_col = move_col + direction[1]
+                if not self.out_of_index(next_row, next_col) and not self.contains_any_piece(next_row, next_col):
                     cpt_move_lst.append(Move([row, col], [next_row, next_col], True))
         return cpt_move_lst
 
-    def initialize_valid_move_lst(self):
-        self.valid_moves = self.EMPTY_LIST
+    def reset_valid_move_lst(self):
+        self.valid_moves.clear()
     
     def a_piece_move(self, row, col):
-        self.initialize_valid_move_lst()
+        self.reset_valid_move_lst()
         moves = self.psb_cpt_move(row, col) + self.psb_noncpt_move(row, col)
         for move in moves:
             self.valid_moves.append(move.end)
@@ -103,8 +101,11 @@ class GameState:
         for row in range(self.NUM_SQUARES):
             for col in range(self.NUM_SQUARES):
                 if self.contains_cur_piece(row, col):
-                    move_lst = self.psb_noncpt_move(row, col) + move_lst
-                    move_lst = move_lst + self.psb_cpt_move(row, col)
+                    move_lst = self.psb_cpt_move(row, col) + move_lst
+                    move_lst = move_lst + self.psb_noncpt_move(row, col)
+        print(move_lst[0])
+        print(move_lst[1])
+        print(move_lst[2])
         self.all_move_lst = move_lst
 
                 
@@ -130,9 +131,6 @@ class GameState:
             self.current_player = self.RED
         else:
             self.current_player = self.BLACK
-
-    def reset_moves_lst(self):
-        self.valid_moves = self.EMPTY_LIST
 
     def back_pre_stage(self):
         self.stage = (self.stage - 1) % self.NUM_OF_STAGE

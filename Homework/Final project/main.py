@@ -41,24 +41,43 @@ def click_handler(x, y):
             game_state.changes_stage()
 
     elif game_state.stage == game_state.MOVE_SELECTED:
-        if is_psb_move(row, col, game_state.valid_moves):
-            game_state.move_occurs(row, col)
-            game_state.updates_board(row, col)
-            game_state.reset_moves_lst()
-            pre_location = game_state.clicks[0]
-            new_location = game_state.clicks[1]
-            if game_state.current_player == game_state.BLACK:
-                board_ui.move_piece("black", pre_location, new_location)
-            else:
-                board_ui.move_piece("red", pre_location, new_location)
-            game_state.switches_turn()
-            game_state.changes_stage()
-        elif game_state.contains_cur_piece(row, col):
-            game_state.selection_occurs(row, col)
-            game_state.psb_noncpt_move(row, col)
-            board_ui.choosing_notation(row, col, game_state.valid_moves)
+        print(have_cpt_move(game_state.all_move_lst))
+        if have_cpt_move(game_state.all_move_lst):
+            print(is_cpt_move(row, col, game_state.all_move_lst))
+            if is_cpt_move(row, col, game_state.all_move_lst):
+                game_state.move_occurs(row, col)
+                game_state.updates_board(row, col)
+                game_state.reset_valid_move_lst()
+                pre_location = game_state.clicks[0]
+                new_location = game_state.clicks[1]
+                if game_state.current_player == game_state.BLACK:
+                    board_ui.cpt_move_piece("black", pre_location, new_location)
+                else:
+                    board_ui.cpt_move_piece("red", pre_location, new_location)
+                game_state.switches_turn()
+                game_state.all_pieces_move()
+                game_state.changes_stage()
         else:
-            game_state.reset_moves_lst()
+            if is_psb_move(row, col, game_state.valid_moves):
+                game_state.move_occurs(row, col)
+                game_state.updates_board(row, col)
+                game_state.reset_valid_move_lst()
+                pre_location = game_state.clicks[0]
+                new_location = game_state.clicks[1]
+                if game_state.current_player == game_state.BLACK:
+                    board_ui.move_piece("black", pre_location, new_location)
+                else:
+                    board_ui.move_piece("red", pre_location, new_location)
+                game_state.switches_turn()
+                game_state.all_pieces_move()
+                game_state.changes_stage()
+            elif game_state.contains_cur_piece(row, col):
+                game_state.selection_occurs(row, col)
+                game_state.a_piece_move(row, col)
+                board_ui.choosing_notation(row, col, game_state.valid_moves)
+            else:
+                game_state.reset_valid_move_lst()
+                game_state.changes_stage()
 
     notion_display(game_state.current_player)
     #except:
@@ -115,6 +134,17 @@ def notion_display(current_player):
     else:
         board_ui.black_turn_notion()
 
+def have_cpt_move(all_move_lst):
+    if not all_move_lst[0].is_capt:
+        return False
+    return True
+
+def is_cpt_move(row, col, all_move_lst):
+    for move in all_move_lst:
+        if [row, col] == move.end:
+            return True
+        elif not move.is_capt:
+            return False
 
 def main():
     screen = turtle.Screen()

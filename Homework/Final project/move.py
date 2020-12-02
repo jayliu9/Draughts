@@ -14,3 +14,6 @@ class Move:
         self.start = start
         self.end = end
         self.is_capt = is_capt
+
+    def __str__(self):
+        return "{},{},{}".format(self.start, self.end, self.is_capt)
