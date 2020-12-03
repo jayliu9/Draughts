@@ -40,9 +40,9 @@ def click_handler(x, y):
             game_state.selection_occurs(row, col)
             game_state.a_piece_move(row, col)
             board_ui.choosing_notation(row, col, game_state.valid_end_locations)
-            game_state.changes_stage()
+            game_state.stage_of_move()
 
-    elif game_state.stage == game_state.MOVE_SELECTED:
+    elif game_state.stage == game_state.MOVE_SELECTED or game_state.stage == game_state.CONTINUE_MOVE_SELECTED:
         print(game_state.all_move_lst[0])
         print(game_state.all_move_lst[1])
         print(game_state.all_move_lst[2])
@@ -62,17 +62,33 @@ def click_handler(x, y):
                     board_ui.cpt_move_piece("black", pre_location, new_location)
                 else:
                     board_ui.cpt_move_piece("red", pre_location, new_location)
-                game_state.switches_turn()
-                game_state.all_pieces_move()
-                game_state.changes_stage()
+
+                new_row = new_location[0]
+                new_col = new_location[1]
+                game_state.a_piece_move(new_row, new_col)
+                if contains_cpt_move(new_row, new_col, game_state.valid_moves):
+                    game_state.stage_of_continue_move()
+                    game_state.selection_occurs(new_row, new_col)
+                    cpt_end_locations = gets_cpt_end_locations(game_state.valid_moves)
+                    board_ui.choosing_notation(new_row, new_col, cpt_end_locations)
+                else:
+                    game_state.switches_turn()
+                    game_state.all_pieces_move()
+                    game_state.stage_of_selection()
             elif game_state.contains_cur_piece(row, col):
-                game_state.selection_occurs(row, col)
-                game_state.a_piece_move(row, col)
-                board_ui.choosing_notation(row, col, game_state.valid_end_locations)
+                if game_state.stage == game_state.MOVE_SELECTED:
+                    game_state.selection_occurs(row, col)
+                    game_state.a_piece_move(row, col)
+                    board_ui.choosing_notation(row, col, game_state.valid_end_locations)
+                elif row == game_state.clicks[0][0] and col == game_state.clicks[0][1]:
+                    cpt_end_locations = gets_cpt_end_locations(game_state.valid_moves)
+                    board_ui.choosing_notation(row, col, cpt_end_locations)    
             else:
-                game_state.reset_endlocations_lst()
-                game_state.reset_valid_move_lst()
-                game_state.changes_stage()
+                if game_state.stage == game_state.MOVE_SELECTED:
+                    game_state.reset_endlocations_lst()
+                    game_state.reset_valid_move_lst()
+                    game_state.stage_of_selection()
+                
         elif is_psb_move(row, col, game_state.valid_end_locations):
                 game_state.move_occurs(row, col)
                 game_state.updates_board(row, col)
@@ -86,7 +102,7 @@ def click_handler(x, y):
                     board_ui.move_piece("red", pre_location, new_location)
                 game_state.switches_turn()
                 game_state.all_pieces_move()
-                game_state.changes_stage()
+                game_state.stage_of_selection()
         elif game_state.contains_cur_piece(row, col):
             game_state.selection_occurs(row, col)
             game_state.a_piece_move(row, col)
@@ -94,8 +110,9 @@ def click_handler(x, y):
         else:
             game_state.reset_endlocations_lst()
             game_state.reset_valid_move_lst()
-            game_state.changes_stage()
-
+            game_state.stage_of_selection()
+    #elif game_state.stage == game_state.CONTINUE_MOVE_SELECTED:
+        
     notion_display(game_state.current_player)
     #except:
         #print("out of range")
@@ -141,6 +158,7 @@ def remove_hint(chosen_piece, valid_end_locations):
     chosen_col = chosen_piece[1]
     board_ui.remove_choice_mark(chosen_row, chosen_col)
     for end_location in valid_end_locations:
+        print(end_location)
         row_to_move = end_location[0]
         col_to_move = end_location[1]
         board_ui.remove_move_mark(row_to_move, col_to_move)
@@ -162,6 +180,22 @@ def is_cpt_move(row, col, move_lst):
             if [row, col] == move.end:
                 return True
     return False
+
+def contains_cpt_move(row, col, move_lst):
+    if not is_empty_lst(move_lst):
+        return move_lst[0].is_capt
+    return False
+
+def is_empty_lst(lst):
+    return len(lst) == 0
+
+
+def gets_cpt_end_locations(move_lst):
+    new_list = []
+    for move in move_lst:
+        if move.is_capt:
+            new_list.append(move.end)
+    return new_list
 
 
 def main():

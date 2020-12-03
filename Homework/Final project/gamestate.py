@@ -30,7 +30,7 @@ class GameState:
         [EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED)],
         [Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY]
     ]
-    TURN_STARTED = 3
+    CONTINUE_MOVE_SELECTED = 2
     PIECE_SELECTED = 0
     MOVE_SELECTED = 1
     NUM_OF_STAGE = 2
@@ -132,8 +132,14 @@ class GameState:
     def selection_occurs(self, row, col):
         self.clicks[0] = [row, col]
 
-    def changes_stage(self):
-        self.stage = (self.stage + 1) % self.NUM_OF_STAGE
+    def stage_of_selection(self):
+        self.stage = self.PIECE_SELECTED
+
+    def stage_of_move(self):
+        self.stage = self.MOVE_SELECTED
+
+    def stage_of_continue_move(self):
+        self.stage = self.CONTINUE_MOVE_SELECTED
 
     def move_occurs(self, row, col):
         self.clicks[1] = [row, col]
