@@ -53,33 +53,31 @@ def click_handler(x, y):
                     game_state.reset_valid_move_lst()
                     pre_location = game_state.clicks[0]
                     new_location = game_state.clicks[1]
-                    new_row = new_location[0]
-                    new_col = new_location[1]
-                    moved_piece = game_state.squares[new_row][new_col]
+                    moved_piece = game_state.squares[row][col]
                     board_ui.cpt_move_piece(game_state.current_player, pre_location, new_location, moved_piece)
 
-                    game_state.a_piece_move(new_row, new_col)
+                    game_state.a_piece_move(row, col)
                     if contains_cpt_move(game_state.valid_moves):
                         game_state.stage_of_continue_move()
-                        game_state.selection_occurs(new_row, new_col)
+                        game_state.selection_occurs(row, col)
                         cpt_end_locations = gets_cpt_end_locations(game_state.valid_moves)
-                        board_ui.choosing_notation(new_row, new_col, cpt_end_locations)
+                        board_ui.choosing_notation(row, col, cpt_end_locations)
                     else:
                         game_state.switches_turn()
                         game_state.all_pieces_move()
                         game_state.stage_of_selection()
                 elif game_state.contains_cur_piece(row, col):
+                    game_state.a_piece_move(row, col)
                     if game_state.stage == game_state.MOVE_SELECTED:
                         game_state.selection_occurs(row, col)
-                        game_state.a_piece_move(row, col)
                         board_ui.choosing_notation(row, col, game_state.valid_end_locations)
                     elif row == game_state.clicks[0][0] and col == game_state.clicks[0][1]:
                         cpt_end_locations = gets_cpt_end_locations(game_state.valid_moves)
                         board_ui.choosing_notation(row, col, cpt_end_locations)    
                 else:
+                    game_state.reset_endlocations_lst()
+                    game_state.reset_valid_move_lst()
                     if game_state.stage == game_state.MOVE_SELECTED:
-                        game_state.reset_endlocations_lst()
-                        game_state.reset_valid_move_lst()
                         game_state.stage_of_selection()
                     
             elif is_psb_move(row, col, game_state.valid_end_locations):
