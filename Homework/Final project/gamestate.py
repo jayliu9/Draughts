@@ -65,13 +65,6 @@ class GameState:
             if not self.out_of_index(move_row, move_col) and not self.contains_any_piece(move_row, move_col):
                 noncpt_move_lst.append(Move([row, col], [move_row, move_col], False))
         return noncpt_move_lst
-              
-        #self.valid_moves = [[forward, left], [forward, right]]
-        #valid_moves_copy = self.valid_moves.copy()
-        #for position in valid_moves_copy:
-            #if (self.out_of_index(position[0], position[1]) or
-                #self.contains_any_piece(position[0], position[1])):
-                #self.valid_moves.remove(position)
     
     def psb_cpt_move(self, row, col):
         cpt_move_lst = []
@@ -93,11 +86,6 @@ class GameState:
     def reset_valid_move_lst(self):
         self.valid_moves.clear()
 
-    #def a_piece_end_locations(self):
-        #self.reset_endlocations_lst()
-        #for move in self.valid_moves:
-            #self.valid_end_locations.append(move.end)
-
     def a_piece_move(self, row, col):
         self.reset_valid_move_lst()
         self.reset_endlocations_lst()
@@ -114,8 +102,6 @@ class GameState:
                     move_lst = self.psb_cpt_move(row, col) + move_lst
                     move_lst = move_lst + self.psb_noncpt_move(row, col)
         self.all_move_lst = move_lst
-
-                
 
     def updates_board(self, row, col):
         MIDDLE = 0.5
@@ -142,7 +128,7 @@ class GameState:
         self.stage = self.CONTINUE_MOVE_SELECTED
 
     def move_occurs(self, row, col):
-        self.clicks[1] = [row, col]
+        self.clicks[1] = [row, col] 
 
     def switches_turn(self):
         if self.current_player == self.BLACK:
@@ -152,3 +138,9 @@ class GameState:
 
     def back_pre_stage(self):
         self.stage = (self.stage - 1) % self.NUM_OF_STAGE
+
+    def is_king_upgrading_move(self, row, col):
+        TOP_ROW = 7
+        BOTTOM_ROW = 0
+        
+        return self.current_player == self.BLACK and row == TOP_ROW or self.current_player == self.RED and row == BOTTOM_ROW

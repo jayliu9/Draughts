@@ -23,3 +23,9 @@ class Piece:
             self.directions = B_RGL_DIRECTION
         else:
             self.directions = R_RGL_DIRECTION
+
+    def becomes_king(self):
+        KING_DIRECTION = [[1, -1], [1, 1], [-1, -1], [-1, 1]]
+
+        self.directions = KING_DIRECTION
+        self.is_king = True

@@ -17,6 +17,7 @@ class DrawingUI:
     PIECE_COLORS = ("black", "red")
     CIRCLE_RADIUS = 0.5 * SQUARE
     WINDOW_SIZE = BOARD_SIZE + 4 * SQUARE
+    KING_MARK_SIZE = 10
 
     def __init__(self):
         self.initial_board()
@@ -109,7 +110,6 @@ class DrawingUI:
 
         self.pen.color(HINT_COLOR)
         for end_location in valid_end_locations:
-            print(end_location)
             next_row = end_location[0]
             next_col = end_location[1]
             self.pen.setposition(self.CORNER + next_col * self.SQUARE,
@@ -127,7 +127,10 @@ class DrawingUI:
         self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
         self.draws_nonfilled_square(self.SQUARE)
 
-    def move_piece(self, current_color, piece_location, new_location):
+    def move_piece(self, current_player, piece_location, new_location, piece):
+        BLACK_PLAYER = "b"
+        RED_PLAYER = "r"
+
         pre_row = piece_location[0]
         pre_col = piece_location[1]
         post_row = new_location[0]
@@ -136,14 +139,19 @@ class DrawingUI:
         self.pen.setposition(self.CORNER + self.SQUARE * pre_col,
                              self.CORNER + self.SQUARE * pre_row)
         self.draw_square(self.SQUARE)
-        self.pen.color(current_color, current_color)
+        if current_player == BLACK_PLAYER:
+            self.pen.color(self.PIECE_COLORS[0], self.PIECE_COLORS[0])
+        else:
+            self.pen.color(self.PIECE_COLORS[1], self.PIECE_COLORS[1])
         self.pen.setposition(self.CORNER + self.SQUARE * post_col + self.CIRCLE_RADIUS,
                              self.CORNER + self.SQUARE * post_row)
         self.draw_circle(self.CIRCLE_RADIUS)
+        if piece.is_king:
+            self.king_mark(post_row, post_col)
 
-    def cpt_move_piece(self, current_color, piece_location, new_location):
+    def cpt_move_piece(self, current_player, piece_location, new_location, piece):
         MIDDLE = 0.5
-        self.move_piece(current_color, piece_location, new_location)
+        self.move_piece(current_player, piece_location, new_location, piece)
         self.pen.color("black", self.SQUARE_COLORS[0])
 
         removed_row = (piece_location[0] + new_location[0]) * MIDDLE
@@ -200,3 +208,10 @@ class DrawingUI:
         self.pen.color(self.PIECE_COLORS[1], self.PIECE_COLORS[1])
         self.pen.setposition(self.CORNER - 1 * self.SQUARE + 0.5 * self.CIRCLE_RADIUS, 0)
         self.draw_circle(0.5 * self.CIRCLE_RADIUS)
+
+    def king_mark(self, row, col):
+        self.pen.color("yellow", "yellow")
+        self.pen.setposition(self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS,
+                             self.CORNER + self.SQUARE * row + self.CIRCLE_RADIUS - self.KING_MARK_SIZE)
+        self.draw_circle(self.KING_MARK_SIZE)
+
