@@ -18,7 +18,6 @@ class GameState:
     EMPTY = ""
     BLACK = "b"
     RED = "r"
-    EMPTY_LIST = []
     INITIAL_CLICK_LIST = [[0, 0], [0, 0]]
 
     INITIAL_POSITION = [
@@ -41,7 +40,8 @@ class GameState:
         self.current_player = self.BLACK
         self.stage = self.PIECE_SELECTED
         self.clicks = self.INITIAL_CLICK_LIST
-        self.valid_moves = self.EMPTY_LIST
+        self.valid_moves = []
+        self.valid_end_locations = []
         self.all_pieces_move()
 
     def contains_any_piece(self, row, col):
@@ -87,15 +87,25 @@ class GameState:
                     cpt_move_lst.append(Move([row, col], [next_row, next_col], True))
         return cpt_move_lst
 
+    def reset_endlocations_lst(self):
+        self.valid_end_locations.clear()
+    
     def reset_valid_move_lst(self):
         self.valid_moves.clear()
-    
+
+    #def a_piece_end_locations(self):
+        #self.reset_endlocations_lst()
+        #for move in self.valid_moves:
+            #self.valid_end_locations.append(move.end)
+
     def a_piece_move(self, row, col):
         self.reset_valid_move_lst()
+        self.reset_endlocations_lst()
         moves = self.psb_cpt_move(row, col) + self.psb_noncpt_move(row, col)
         for move in moves:
-            self.valid_moves.append(move.end)
-
+            self.valid_moves.append(move)
+            self.valid_end_locations.append(move.end)
+            
     def all_pieces_move(self):
         move_lst = []
         for row in range(self.NUM_SQUARES):
@@ -103,19 +113,21 @@ class GameState:
                 if self.contains_cur_piece(row, col):
                     move_lst = self.psb_cpt_move(row, col) + move_lst
                     move_lst = move_lst + self.psb_noncpt_move(row, col)
-        print(move_lst[0])
-        print(move_lst[1])
-        print(move_lst[2])
         self.all_move_lst = move_lst
 
                 
 
     def updates_board(self, row, col):
+        MIDDLE = 0.5
         pre_row = self.clicks[0][0]
         pre_col = self.clicks[0][1]
         temp = self.squares[pre_row][pre_col]
         self.squares[pre_row][pre_col] = self.EMPTY
         self.squares[row][col] = temp
+        if abs(row - pre_row) > 1:
+            removed_row = int((pre_row + row) * MIDDLE)
+            removed_col = int((pre_col + col) * MIDDLE)
+            self.squares[removed_row][removed_col] = self.EMPTY
 
     def selection_occurs(self, row, col):
         self.clicks[0] = [row, col]

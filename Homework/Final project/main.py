@@ -32,24 +32,32 @@ def click_handler(x, y):
     index_lst = calculates_index(x, y)
     row = index_lst[0]
     col = index_lst[1]
-    remove_hint(game_state.clicks[0], game_state.valid_moves)
+    remove_hint(game_state.clicks[0], game_state.valid_end_locations)
+    print(game_state.valid_end_locations)
+    print(game_state.stage)
     if game_state.stage == game_state.PIECE_SELECTED:
         if game_state.contains_cur_piece(row, col):
             game_state.selection_occurs(row, col)
             game_state.a_piece_move(row, col)
-            board_ui.choosing_notation(row, col, game_state.valid_moves)
+            board_ui.choosing_notation(row, col, game_state.valid_end_locations)
             game_state.changes_stage()
 
     elif game_state.stage == game_state.MOVE_SELECTED:
+        print(game_state.all_move_lst[0])
+        print(game_state.all_move_lst[1])
+        print(game_state.all_move_lst[2])
         print(have_cpt_move(game_state.all_move_lst))
         if have_cpt_move(game_state.all_move_lst):
-            print(is_cpt_move(row, col, game_state.all_move_lst))
-            if is_cpt_move(row, col, game_state.all_move_lst):
+            print(is_cpt_move(row, col, game_state.valid_moves))
+            if is_cpt_move(row, col, game_state.valid_moves):
                 game_state.move_occurs(row, col)
                 game_state.updates_board(row, col)
+                game_state.reset_endlocations_lst()
                 game_state.reset_valid_move_lst()
                 pre_location = game_state.clicks[0]
                 new_location = game_state.clicks[1]
+                print(pre_location)
+                print(new_location)
                 if game_state.current_player == game_state.BLACK:
                     board_ui.cpt_move_piece("black", pre_location, new_location)
                 else:
@@ -57,10 +65,18 @@ def click_handler(x, y):
                 game_state.switches_turn()
                 game_state.all_pieces_move()
                 game_state.changes_stage()
-        else:
-            if is_psb_move(row, col, game_state.valid_moves):
+            elif game_state.contains_cur_piece(row, col):
+                game_state.selection_occurs(row, col)
+                game_state.a_piece_move(row, col)
+                board_ui.choosing_notation(row, col, game_state.valid_end_locations)
+            else:
+                game_state.reset_endlocations_lst()
+                game_state.reset_valid_move_lst()
+                game_state.changes_stage()
+        elif is_psb_move(row, col, game_state.valid_end_locations):
                 game_state.move_occurs(row, col)
                 game_state.updates_board(row, col)
+                game_state.reset_endlocations_lst()
                 game_state.reset_valid_move_lst()
                 pre_location = game_state.clicks[0]
                 new_location = game_state.clicks[1]
@@ -71,13 +87,14 @@ def click_handler(x, y):
                 game_state.switches_turn()
                 game_state.all_pieces_move()
                 game_state.changes_stage()
-            elif game_state.contains_cur_piece(row, col):
-                game_state.selection_occurs(row, col)
-                game_state.a_piece_move(row, col)
-                board_ui.choosing_notation(row, col, game_state.valid_moves)
-            else:
-                game_state.reset_valid_move_lst()
-                game_state.changes_stage()
+        elif game_state.contains_cur_piece(row, col):
+            game_state.selection_occurs(row, col)
+            game_state.a_piece_move(row, col)
+            board_ui.choosing_notation(row, col, game_state.valid_end_locations)
+        else:
+            game_state.reset_endlocations_lst()
+            game_state.reset_valid_move_lst()
+            game_state.changes_stage()
 
     notion_display(game_state.current_player)
     #except:
@@ -115,17 +132,17 @@ def calculates_row(y):
 
 
 
-def is_psb_move(row, col, valid_moves):
-    return [row, col] in valid_moves
+def is_psb_move(row, col, valid_end_locations):
+    return [row, col] in valid_end_locations
 
 
-def remove_hint(chosen_piece, valid_moves):
+def remove_hint(chosen_piece, valid_end_locations):
     chosen_row = chosen_piece[0]
     chosen_col = chosen_piece[1]
     board_ui.remove_choice_mark(chosen_row, chosen_col)
-    for move in game_state.valid_moves:
-        row_to_move = move[0]
-        col_to_move = move[1]
+    for end_location in valid_end_locations:
+        row_to_move = end_location[0]
+        col_to_move = end_location[1]
         board_ui.remove_move_mark(row_to_move, col_to_move)
 
 def notion_display(current_player):
@@ -139,12 +156,13 @@ def have_cpt_move(all_move_lst):
         return False
     return True
 
-def is_cpt_move(row, col, all_move_lst):
-    for move in all_move_lst:
-        if [row, col] == move.end:
-            return True
-        elif not move.is_capt:
-            return False
+def is_cpt_move(row, col, move_lst):
+    for move in move_lst:
+        if move.is_capt:
+            if [row, col] == move.end:
+                return True
+    return False
+
 
 def main():
     screen = turtle.Screen()

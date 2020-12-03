@@ -98,7 +98,7 @@ class DrawingUI:
             self.pen.left(RIGHT_ANGLE)
         self.pen.penup()
     
-    def choosing_notation(self, row, col, valid_moves):
+    def choosing_notation(self, row, col, valid_end_locations):
         CHOOSING_COLOR = "light green"
         ORIGINAL_COLOR = "black"
         HINT_COLOR = "red"
@@ -108,9 +108,10 @@ class DrawingUI:
         self.draws_nonfilled_square(self.SQUARE)
 
         self.pen.color(HINT_COLOR)
-        for move in valid_moves:
-            next_row = move[0]
-            next_col = move[1]
+        for end_location in valid_end_locations:
+            print(end_location)
+            next_row = end_location[0]
+            next_col = end_location[1]
             self.pen.setposition(self.CORNER + next_col * self.SQUARE,
                                  self.CORNER + next_row * self.SQUARE)
             self.draws_nonfilled_square(self.SQUARE)
@@ -142,16 +143,13 @@ class DrawingUI:
 
     def cpt_move_piece(self, current_color, piece_location, new_location):
         MIDDLE = 0.5
-
-        self.pen.color(current_color, current_color)
         self.move_piece(current_color, piece_location, new_location)
         self.pen.color("black", self.SQUARE_COLORS[0])
 
         removed_row = (piece_location[0] + new_location[0]) * MIDDLE
         removed_col = (piece_location[1] + new_location[1]) * MIDDLE
-        self.pen.color("black", self.SQUARE_COLORS[0])
-        self.pen.setposition(self.CORNER + self.SQUARE * removed_row,
-                             self.CORNER + self.SQUARE * removed_col)
+        self.pen.setposition(self.CORNER + self.SQUARE * removed_col,
+                             self.CORNER + self.SQUARE * removed_row)
         self.draw_square(self.SQUARE)
 
     def initial_board(self):
