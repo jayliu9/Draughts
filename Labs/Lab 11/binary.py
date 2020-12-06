@@ -31,4 +31,12 @@ def binary_search(lst, item):
 
 
 def is_empty_lst(lst):
+    '''
+        Function -- is_empty_lst
+            Checks if the given list is empty.
+        Parameters:
+            lst -- The list to check.
+        Returns:
+            True if the list is empty, False otherwise.
+    '''
     return len(lst) == 0
