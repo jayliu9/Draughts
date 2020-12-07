@@ -167,6 +167,7 @@ class DrawingUI:
         turtle.tracer(0, 0)
 
         self.pen = turtle.Turtle()
+        self.screen = turtle.Screen()
         self.pen.penup()
         self.pen.hideturtle()
         self.pen.color("black", "white")

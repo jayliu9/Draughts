@@ -10,6 +10,7 @@ The code is from first milestone to second milestone of the final project
 from gamestate import GameState
 from drawing import DrawingUI
 import turtle
+import random
 
 game_state = GameState()
 board_ui = DrawingUI()
@@ -44,6 +45,7 @@ def click_handler(x, y):
             if contains_cpt_move(game_state.all_move_lst):
                 if is_cpt_move(row, col, game_state.valid_moves):
                     game_state.move_occurs(row, col)
+                    board_ui.screen.onclick(None)
                     if game_state.is_king_upgrading_move(row, col):
                         pre_row = game_state.clicks[0][0]
                         pre_col = game_state.clicks[0][1]
@@ -82,6 +84,7 @@ def click_handler(x, y):
                     
             elif is_psb_move(row, col, game_state.valid_end_locations):
                     game_state.move_occurs(row, col)
+                    board_ui.screen.onclick(None)
                     if game_state.is_king_upgrading_move(row, col):
                         pre_row = game_state.clicks[0][0]
                         pre_col = game_state.clicks[0][1]
@@ -109,6 +112,7 @@ def click_handler(x, y):
                 game_state.reset_valid_move_lst()
                 game_state.stage_of_selection()
         notion_display(game_state.current_player)
+
     except:
         print("out of range")
 
@@ -187,8 +191,13 @@ def gets_cpt_end_locations(move_lst):
     return new_list
 
 def main():
-    screen = turtle.Screen()
-    screen.onclick(click_handler)
+    #screen = turtle.Screen()
+    if game_state.current_player == game_state.BLACK:
+        board_ui.screen.onclick(click_handler)
+        print("hello")
+    elif not game_state.all_move_lst[0].is_capt:
+        random.choice()
+
     turtle.done()
 
 
