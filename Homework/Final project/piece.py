@@ -7,6 +7,8 @@ Semester: Fall 2020
 
 The code is piece class.
 '''
+
+
 class Piece:
     def __init__(self, color):
         self.color = color

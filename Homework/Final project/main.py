@@ -12,8 +12,10 @@ from drawing import DrawingUI
 import turtle
 import random
 
+
 game_state = GameState()
 board_ui = DrawingUI()
+
 
 def click_handler(x, y):
     '''

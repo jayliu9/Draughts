@@ -9,6 +9,7 @@ This code is drawing UI class.
 '''
 import turtle
 
+
 class DrawingUI:
     NUM_SQUARES = 8
     SQUARE = 50
