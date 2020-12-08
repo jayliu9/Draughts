@@ -11,7 +11,6 @@ from gamestate import GameState
 from drawing import DrawingUI
 import turtle
 import random
-import time
 
 game_state = GameState()
 board_ui = DrawingUI()

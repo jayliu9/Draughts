@@ -1,7 +1,8 @@
 '''
 Name: Shijie Liu
 NUID: 001561546
-Course Number: 18533
+Course: CS 5001
+Course Number: 18529
 Semester: Fall 2020
 
 This code is drawing UI class.
