@@ -28,15 +28,17 @@ def click_handler(x, y):
             of function automatically called by Turtle. You will not have
             access to anything returned by this function.
     '''
+    CAPTURE_MOVE_HINT = "Attention: There exists a capturing move somewhere. Please try again."
+    INVALID_MOVE_WARNING = "Warning: Invalid move."
+    CONTINUE_CAPTURE_HINT = "Attention: You can continue to capture with the piece you just selected."
+
     try:
         if game_state.current_player == game_state.BLACK:
             click_validator(x, y)
-            print("click at", x, y)
+            #print("click at", x, y)
             index_lst = calculates_index(x, y)
             row = index_lst[0]
             col = index_lst[1]
-            print(row)
-            print(col)
             remove_hint(game_state.clicks[0], game_state.valid_end_locations)
             if game_state.stage == game_state.PIECE_SELECTED:
                 if game_state.contains_cur_piece(row, col):
@@ -49,7 +51,6 @@ def click_handler(x, y):
                 if contains_cpt_move(game_state.all_move_lst):
                     if is_cpt_move(row, col, game_state.valid_moves):
                         game_state.move_occurs(row, col)
-                        #board_ui.screen.onclick(None)
                         if game_state.is_king_upgrading_move(row, col):
                             pre_row = game_state.clicks[0][0]
                             pre_col = game_state.clicks[0][1]
@@ -79,8 +80,17 @@ def click_handler(x, y):
                             board_ui.choosing_notation(row, col, game_state.valid_end_locations)
                         elif row == game_state.clicks[0][0] and col == game_state.clicks[0][1]:
                             cpt_end_locations = gets_cpt_end_locations(game_state.valid_moves)
-                            board_ui.choosing_notation(row, col, cpt_end_locations)    
+                            board_ui.choosing_notation(row, col, cpt_end_locations)
+                        else:
+                            print(CONTINUE_CAPTURE_HINT)    
                     else:
+                        if game_state.stage == game_state.MOVE_SELECTED:
+                            if is_psb_move(row, col, game_state.valid_end_locations):
+                                print(CAPTURE_MOVE_HINT)
+                            else:
+                                print(INVALID_MOVE_WARNING)
+                        else:
+                            print(CONTINUE_CAPTURE_HINT)
                         game_state.reset_endlocations_lst()
                         game_state.reset_valid_move_lst()
                         if game_state.stage == game_state.MOVE_SELECTED:
@@ -88,7 +98,6 @@ def click_handler(x, y):
                         
                 elif is_psb_move(row, col, game_state.valid_end_locations):
                         game_state.move_occurs(row, col)
-                        #board_ui.screen.onclick(None)
                         if game_state.is_king_upgrading_move(row, col):
                             pre_row = game_state.clicks[0][0]
                             pre_col = game_state.clicks[0][1]
@@ -112,6 +121,7 @@ def click_handler(x, y):
                     game_state.a_piece_move(row, col)
                     board_ui.choosing_notation(row, col, game_state.valid_end_locations)
                 else:
+                    print(INVALID_MOVE_WARNING)
                     game_state.reset_endlocations_lst()
                     game_state.reset_valid_move_lst()
                     game_state.stage_of_selection()
@@ -172,23 +182,6 @@ def click_handler(x, y):
             else:
                 print("Game Over. You win!")
                 board_ui.screen.onclick(None)
-
-        '''
-        remove_hint(game_state.clicks[0], game_state.valid_end_locations)
-
-        ai_continue_end = get_ai_continue_end(game_state.valid_moves)
-        ai_continue_row = ai_continue_end[0]
-        ai_continue_col = ai_continue_end[1]
-        game_state.move_occurs(ai_continue_row, ai_continue_col)
-        if game_state.is_king_upgrading_move(ai_continue_row, ai_continue_col):
-            game_state.squares[ai_end_row][ai_end_col].becomes_king()
-        game_state.updates_board(ai_continue_row, ai_continue_col)
-        game_state.reset_endlocations_lst()
-        game_state.reset_valid_move_lst()
-        moved_piece = game_state.squares[ai_continue_row][ai_continue_col]
-        '''
-
-
     except:
         print("out of range")
 
@@ -224,7 +217,6 @@ def calculates_row(y):
     return (y - board_ui.CORNER) // board_ui.SQUARE
 
 
-
 def is_psb_move(row, col, valid_end_locations):
     return [row, col] in valid_end_locations
 
@@ -238,11 +230,13 @@ def remove_hint(chosen_piece, valid_end_locations):
         col_to_move = end_location[1]
         board_ui.remove_move_mark(row_to_move, col_to_move)
 
+
 def notion_display(current_player):
     if current_player == game_state.RED:
         board_ui.red_turn_notion()
     else:
         board_ui.black_turn_notion()
+
 
 def is_cpt_move(row, col, move_lst):
     for move in move_lst:
@@ -250,10 +244,12 @@ def is_cpt_move(row, col, move_lst):
             return True
     return False
 
+
 def contains_cpt_move(move_lst):
     if not is_empty_lst(move_lst):
         return move_lst[0].is_capt
     return False
+
 
 def is_empty_lst(lst):
     return len(lst) == 0
@@ -266,40 +262,20 @@ def gets_cpt_end_locations(move_lst):
             new_list.append(move.end)
     return new_list
 
+
 def gets_cpt_moves(move_lst):
     new_list = []
     for move in move_lst:
         if move.is_capt:
             new_list.append(move)
     return new_list
-'''
-def back_to_xy(location):
-    row = location[0]
-    col = location[1]
-    x = board_ui.CORNER + col * board_ui.SQUARE
-    y = board_ui.CORNER + row * board_ui.SQUARE
-    return [x, y]
-'''
+
 
 def get_random_ai_move(all_possible_moves):
     if contains_cpt_move(all_possible_moves):
         all_possible_moves = gets_cpt_moves(all_possible_moves)
     ai_move = random.choice(all_possible_moves)
     return ai_move
-    #start_xy = back_to_xy(ai_move.start)
-    #end_xy = back_to_xy(ai_move.end)
-    #ai_first_click = ai_move.start
-    #ai_second_click = ai_move.end
-    #print(ai_first_click[0])
-    #print(ai_first_click[1])
-    #ai_x_start = board_ui.CORNER + ai_first_click[1] * board_ui.SQUARE
-    #ai_y_start = board_ui.CORNER + ai_first_click[0] * board_ui.SQUARE
-    #ai_x_start = start_xy[0]
-    #ai_y_start = start_xy[1]
-    #click_handler(ai_x_start, ai_y_start)
-    #ai_x_end = end_xy[0]
-    #ai_y_end = end_xy[1]
-    #click_handler(ai_x_end, ai_y_end)
 
 
 def get_ai_continue_(a_piece_moves):
@@ -310,69 +286,14 @@ def get_ai_continue_(a_piece_moves):
 
 def all_cur_pieces_captured():
     are_captured = True
-    #have_no_red_piece = True
-    #have_no_black_piece = True
-    #captured = have_no_black_piece or have_no_red_piece 
     for row in range(game_state.NUM_SQUARES):
         for col in range(game_state.NUM_SQUARES):
             if game_state.contains_cur_piece(row, col):
                 are_captured = False
-            #if game_state.squares[row][col].color == game_state.BLACK:
-                #have_no_black_piece = False
-            #elif game_state.squares[row][col].color == game_state.RED:
-                #have_no_red_piece = False
     return are_captured
 
 
-
 def main():
-    '''
-    #screen = turtle.Screen()
-    game_over = False
-    #while not game_over:
-    #while not game_over:
-    if game_state.current_player == game_state.BLACK:
-        ai_single_move(game_state.all_move_lst)
-        if game_state.stage == game_state.CONTINUE_MOVE_SELECTED:
-            ai_continue_move(game_state.valid_moves)
-        print(game_state.current_player)
-        print(game_state.stage)
-    board_ui.screen.onclick(click_handler)
-    print(game_state.current_player)
-    print(game_state.stage)
-    if game_state.current_player == game_state.RED:
-        ai_single_move(game_state.all_move_lst)
-        if game_state.stage == game_state.CONTINUE_MOVE_SELECTED:
-            ai_continue_move(game_state.valid_moves)
-        print(game_state.current_player)
-        print(game_state.stage)
-    board_ui.screen.onclick(click_handler)
-        #\board_ui.screen.onclick(click_handler)
-        #print("hello")
-        #if all_cur_pieces_captured() or contains_no_move(game_state.all_move_lst):
-            #print("Black Piece Win!")
-            #notion_display(game_state.BLACK)
-            #break
-    
-        else:
-            
-            ai_move = random.choice(game_state.all_move_lst)
-            ai_first_click = ai_move.start
-            print(ai_first_click[0])
-            print(ai_first_click[1])
-            ai_x_start = board_ui.CORNER + ai_first_click[1] * board_ui.SQUARE
-            ai_y_start = board_ui.CORNER + ai_first_click[0] * board_ui.SQUARE
-            board_ui.screen.ontimer(click_handler(ai_x_start, ai_y_start), 500)
-            ai_x_end = board_ui.CON
-            ai_x_end
-            board_ui.screen.ontimer(click_handler())
-            
-            board_ui.screen.onclick(click_handler)
-            if all_cur_pieces_captured() or contains_no_move(game_state.all_move_lst):
-                print("Red Piece Win!")
-                notion_display(game_state.RED)
-                game_over = True
-    '''
     board_ui.screen.onclick(click_handler)
     
     turtle.done()
