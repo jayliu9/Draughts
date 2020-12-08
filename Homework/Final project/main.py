@@ -206,8 +206,10 @@ def back_to_xy(location):
     return [x, y]
 
 
-def ai_non_capt_move(lst):
-    ai_move = random.choice(lst)
+def ai_single_move(all_possible_moves):
+    if contains_cpt_move(all_possible_moves):
+        all_possible_moves = gets_cpt_move(all_possible_moves)
+    ai_move = random.choice(all_possible_moves)
     start_xy = back_to_xy(ai_move.start)
     end_xy = back_to_xy(ai_move.end)
     #ai_first_click = ai_move.start
@@ -224,58 +226,72 @@ def ai_non_capt_move(lst):
     click_handler(ai_x_end, ai_y_end)
 
 
-def ai_capt_move(lst):
-    '''
-    capt_move_lst = gets_cpt_move(lst)
-    ai_move = random.choice(capt_move_lst)
-    start_xy = back_to_xy(ai_move.start)
-    end_xy = back_to_xy(ai_move.end)
-    ai_x_start = board_ui.CORNER + ai_first_click[1] * board_ui.SQUARE
-    ai_y_start = board_ui.CORNER + ai_first_click[0] * board_ui.SQUARE
-    click_handler(ai_x_start, ai_y_start)
-    ai_x_end = board_ui.CORNER + ai_second_click[1] * board_ui.SQUARE
-    ai_y_end = board_ui.CORNER + ai_second_click[0] * board_ui.SQUARE
-    click_handler(ai_x_end, ai_y_end)
-    '''
-    ai_move = random.choice(lst)
-    start_xy = back_to_xy(ai_move.start)
-    end_xy = back_to_xy(ai_move.end)
-    #ai_first_click = ai_move.start
-    #ai_second_click = ai_move.end
-    #print(ai_first_click[0])
-    #print(ai_first_click[1])
-    #ai_x_start = board_ui.CORNER + ai_first_click[1] * board_ui.SQUARE
-    #ai_y_start = board_ui.CORNER + ai_first_click[0] * board_ui.SQUARE
-    ai_x_start = start_xy[0]
-    ai_y_start = start_xy[1]
-    click_handler(ai_x_start, ai_y_start)
-    ai_x_end = end_xy[0]
-    ai_y_end = end_xy[1]
-    click_handler(ai_x_end, ai_y_end)
-    
+def ai_continue_move(a_piece_moves):
+    cpt_end_lst = gets_cpt_end_locations(a_piece_moves)
+    ai_continue_end = random.choice(cpt_end_lst)
+    continue_end_xy = back_to_xy(ai_continue_end)
+    ai_continue_end_x = continue_end_xy[0]
+    ai_continue_end_y = continue_end_xy[1]
+    click_handler(ai_continue_end_x, ai_continue_end_y)
+
+
+def all_cur_pieces_captured():
+    are_captured = True
+    #have_no_red_piece = True
+    #have_no_black_piece = True
+    #captured = have_no_black_piece or have_no_red_piece 
+    for row in range(game_state.NUM_SQUARES):
+        for col in range(game_state.NUM_SQUARES):
+            if game_state.contains_cur_piece(row, col):
+                are_captured = False
+            #if game_state.squares[row][col].color == game_state.BLACK:
+                #have_no_black_piece = False
+            #elif game_state.squares[row][col].color == game_state.RED:
+                #have_no_red_piece = False
+    return are_captured
+
+
+def contains_no_move(all_moves_lst):
+    return len(all_moves_lst) == 0
+
 
 def main():
     #screen = turtle.Screen()
-    if game_state.current_player == game_state.BLACK:
-        ai_non_capt_move(game_state.all_move_lst)
-        print(game_state.current_player)
-        print(game_state.stage)
-        #board_ui.screen.onclick(click_handler)
-        #print("hello")
-    elif not contains_cpt_move(game_state.all_move_lst):
+    game_over = False
+    
+    while not game_over:
+        if game_state.current_player == game_state.BLACK:
+            ai_single_move(game_state.all_move_lst)
+            if game_state.stage == game_state.CONTINUE_MOVE_SELECTED:
+                ai_continue_move(game_state.valid_moves)
+            print(game_state.current_player)
+            print(game_state.stage)
+            #board_ui.screen.onclick(click_handler)
+            #print("hello")
+            if all_cur_pieces_captured() or contains_no_move(game_state.all_move_lst):
+                print("Black Piece Win!")
+                notion_display(game_state.BLACK)
+                break
         '''
-        ai_move = random.choice(game_state.all_move_lst)
-        ai_first_click = ai_move.start
-        print(ai_first_click[0])
-        print(ai_first_click[1])
-        ai_x_start = board_ui.CORNER + ai_first_click[1] * board_ui.SQUARE
-        ai_y_start = board_ui.CORNER + ai_first_click[0] * board_ui.SQUARE
-        board_ui.screen.ontimer(click_handler(ai_x_start, ai_y_start), 500)
-        ai_x_end = board_ui.CON
-        ai_x_end
-        board_ui.screen.ontimer(click_handler())
+        elif not contains_cpt_move(game_state.all_move_lst):
+            
+            ai_move = random.choice(game_state.all_move_lst)
+            ai_first_click = ai_move.start
+            print(ai_first_click[0])
+            print(ai_first_click[1])
+            ai_x_start = board_ui.CORNER + ai_first_click[1] * board_ui.SQUARE
+            ai_y_start = board_ui.CORNER + ai_first_click[0] * board_ui.SQUARE
+            board_ui.screen.ontimer(click_handler(ai_x_start, ai_y_start), 500)
+            ai_x_end = board_ui.CON
+            ai_x_end
+            board_ui.screen.ontimer(click_handler())
+            
+            board_ui.screen.onclick(click_handler)
+            if all_cur_pieces_captured() or contains_no_move(game_state.all_move_lst):
+                print("Red Piece Win!")
+                notion_display(game_state.RED)
+                game_over = True
         '''
-        board_ui.screen.onclick(click_handler)
 
     turtle.done()
 
