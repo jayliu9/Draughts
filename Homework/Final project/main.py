@@ -11,6 +11,7 @@ from gamestate import GameState
 from drawing import DrawingUI
 import turtle
 import random
+import time
 
 game_state = GameState()
 board_ui = DrawingUI()
@@ -190,13 +191,91 @@ def gets_cpt_end_locations(move_lst):
             new_list.append(move.end)
     return new_list
 
+def gets_cpt_move(move_lst):
+    new_list = []
+    for move in move_lst:
+        if move.is_capt:
+            new_list.append(move)
+    return new_list
+
+def back_to_xy(location):
+    row = location[0]
+    col = location[1]
+    x = board_ui.CORNER + col * board_ui.SQUARE
+    y = board_ui.CORNER + row * board_ui.SQUARE
+    return [x, y]
+
+
+def ai_non_capt_move(lst):
+    ai_move = random.choice(lst)
+    start_xy = back_to_xy(ai_move.start)
+    end_xy = back_to_xy(ai_move.end)
+    #ai_first_click = ai_move.start
+    #ai_second_click = ai_move.end
+    #print(ai_first_click[0])
+    #print(ai_first_click[1])
+    #ai_x_start = board_ui.CORNER + ai_first_click[1] * board_ui.SQUARE
+    #ai_y_start = board_ui.CORNER + ai_first_click[0] * board_ui.SQUARE
+    ai_x_start = start_xy[0]
+    ai_y_start = start_xy[1]
+    click_handler(ai_x_start, ai_y_start)
+    ai_x_end = end_xy[0]
+    ai_y_end = end_xy[1]
+    click_handler(ai_x_end, ai_y_end)
+
+
+def ai_capt_move(lst):
+    '''
+    capt_move_lst = gets_cpt_move(lst)
+    ai_move = random.choice(capt_move_lst)
+    start_xy = back_to_xy(ai_move.start)
+    end_xy = back_to_xy(ai_move.end)
+    ai_x_start = board_ui.CORNER + ai_first_click[1] * board_ui.SQUARE
+    ai_y_start = board_ui.CORNER + ai_first_click[0] * board_ui.SQUARE
+    click_handler(ai_x_start, ai_y_start)
+    ai_x_end = board_ui.CORNER + ai_second_click[1] * board_ui.SQUARE
+    ai_y_end = board_ui.CORNER + ai_second_click[0] * board_ui.SQUARE
+    click_handler(ai_x_end, ai_y_end)
+    '''
+    ai_move = random.choice(lst)
+    start_xy = back_to_xy(ai_move.start)
+    end_xy = back_to_xy(ai_move.end)
+    #ai_first_click = ai_move.start
+    #ai_second_click = ai_move.end
+    #print(ai_first_click[0])
+    #print(ai_first_click[1])
+    #ai_x_start = board_ui.CORNER + ai_first_click[1] * board_ui.SQUARE
+    #ai_y_start = board_ui.CORNER + ai_first_click[0] * board_ui.SQUARE
+    ai_x_start = start_xy[0]
+    ai_y_start = start_xy[1]
+    click_handler(ai_x_start, ai_y_start)
+    ai_x_end = end_xy[0]
+    ai_y_end = end_xy[1]
+    click_handler(ai_x_end, ai_y_end)
+    
+
 def main():
     #screen = turtle.Screen()
     if game_state.current_player == game_state.BLACK:
+        ai_non_capt_move(game_state.all_move_lst)
+        print(game_state.current_player)
+        print(game_state.stage)
+        #board_ui.screen.onclick(click_handler)
+        #print("hello")
+    elif not contains_cpt_move(game_state.all_move_lst):
+        '''
+        ai_move = random.choice(game_state.all_move_lst)
+        ai_first_click = ai_move.start
+        print(ai_first_click[0])
+        print(ai_first_click[1])
+        ai_x_start = board_ui.CORNER + ai_first_click[1] * board_ui.SQUARE
+        ai_y_start = board_ui.CORNER + ai_first_click[0] * board_ui.SQUARE
+        board_ui.screen.ontimer(click_handler(ai_x_start, ai_y_start), 500)
+        ai_x_end = board_ui.CON
+        ai_x_end
+        board_ui.screen.ontimer(click_handler())
+        '''
         board_ui.screen.onclick(click_handler)
-        print("hello")
-    elif not game_state.all_move_lst[0].is_capt:
-        random.choice()
 
     turtle.done()
 
