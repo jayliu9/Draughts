@@ -11,7 +11,7 @@ This code is for making a Facebook just for the Seven Dwarves.
 def read_file(path):
     lines = []
     try:
-        with open(file, "r") as file:
+        with open(path, "r") as file:
             for line in file:
                 lines.append(line)
     except FileNotFoundError:
@@ -31,15 +31,23 @@ def line_processing(line):
     return line.strip().split(" ")
 
 
+def generate_line(key, dic):
+    WHITESPACE = " "
+    return key + WHITESPACE + WHITESPACE.join(dic[key])
+
+
 def generate_text(network_dic):
     text_lines = []
     for key in network_dic:
-        line = [key] + network_dic[key]
+        line = generate_line(key, network_dic)
         text_lines.append(line)
     return text_lines
 
 
-def write_file(path):
+def write_file(path, content):
+        with open(path, "w") as file:
+            for line in content:
+                file.write(line + "\n")
 
      
 
