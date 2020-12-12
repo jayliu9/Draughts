@@ -10,9 +10,12 @@ This code is for making a Facebook just for the Seven Dwarves.
 
 def read_file(path):
     lines = []
-    with open(file, "r") as file:
-        for line in file:
-            lines.append(line)
+    try:
+        with open(file, "r") as file:
+            for line in file:
+                lines.append(line)
+    except FileNotFoundError:
+        print("File not found")
     return lines
 
 
@@ -20,9 +23,37 @@ def create_network(lines):
     network = {}
     for line in lines:
         processed_line = line_processing(line)
-        network[processed_line[0]] = processed_line[1]
+        network[processed_line[0]] = processed_line[1:]
     return network
 
 
 def line_processing(line):
-    return line.strip().split(" ", 1)
+    return line.strip().split(" ")
+
+
+def generate_text(network_dic):
+    text_lines = []
+    for key in network_dic:
+        line = [key] + network_dic[key]
+        text_lines.append(line)
+    return text_lines
+
+
+def write_file(path):
+
+     
+
+def main():
+    dwarf_name = input("Hi! Who are you?")
+
+    print("Menu:")
+    print("P - Print your list of friends")
+    print("U - Unifriend someone")
+    print("F - Friend someone")
+    print("Q - Quit")
+
+    path = "dwarves.txt"
+    friends_lst = read_file(path)
+    network = create_network(friends_lst)
+
+
