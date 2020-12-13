@@ -50,18 +50,41 @@ def write_file(path, content):
                 file.write(line + "\n")
 
      
+def unfriending(subject_name, object_name, network):
+    network[subject_name].remove(object_name)
+
 
 def main():
-    dwarf_name = input("Hi! Who are you?")
-
-    print("Menu:")
-    print("P - Print your list of friends")
-    print("U - Unifriend someone")
-    print("F - Friend someone")
-    print("Q - Quit")
+    PRINT_FRIENDS = "P"
+    UNFRIDEND = "U"
+    FRIEND = "F"
+    QUIT = "Q"
 
     path = "dwarves.txt"
-    friends_lst = read_file(path)
-    network = create_network(friends_lst)
+    file_list = read_file(path)
+    network = create_network(file_list)
+    dwarf_name = input("Which of the 7 dwarves is logging in?")
+
+    print("Choose from one of the options below:")
+    print("P: Print your list of friends")
+    print("U <name>: Unifriend someone")
+    print("F <name>: Friend someone")
+    print("Q: Quit")
+    user_in = input("Your choice: ")
+
+    user_choice = user_in.split()[0]
+
+    if user_choice == PRINT_FRIENDS:
+        print("Your friends: ", ",".join(network[dwarf_name]))
+    elif user_choice == UNFRIDEND:
+        chosen_name = user_in.split()[1]
+        try:
+            unfriending(dwarf_name, chosen_name, network)
+            unfriending(chosen_name, dwarf_name, network)
+        except ValueError:
+            print("{} is not your friend".format(chosen_name))
+        
+    
+        
 
 
