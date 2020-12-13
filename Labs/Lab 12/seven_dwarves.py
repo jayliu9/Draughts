@@ -54,6 +54,15 @@ def unfriending(subject_name, object_name, network):
     network[subject_name].remove(object_name)
 
 
+def is_empty_list(lst):
+    return len(lst) == 0
+
+
+def friending_validator(name, friend_lst):
+    if name in friend_lst:
+        raise ValueError
+
+
 def main():
     PRINT_FRIENDS = "P"
     UNFRIDEND = "U"
@@ -78,12 +87,26 @@ def main():
         print("Your friends: ", ",".join(network[dwarf_name]))
     elif user_choice == UNFRIDEND:
         chosen_name = user_in.split()[1]
+        if is_empty_list(network[dwarf_name]):
+            print("You don't have any friends.")
+        else:
+            try:
+                unfriending(dwarf_name, chosen_name, network)
+                unfriending(chosen_name, dwarf_name, network)
+                print("{} has been unfriended".format(chosen_name))
+            except ValueError:
+                print("{} is not your friend".format(chosen_name))
+    elif user_choice == FRIEND:
+        chosen_name = user_in.split()[1]
         try:
-            unfriending(dwarf_name, chosen_name, network)
-            unfriending(chosen_name, dwarf_name, network)
+            friending_validator(chosen_name, network[dwarf_name])
+            network[dwarf_name].append(chosen_name)
+            print("{} has been friended".format(chosen_name))
         except ValueError:
-            print("{} is not your friend".format(chosen_name))
+            print("{} was your friend.".format(chosen_name))
+    elif user_choice == QUIT:
         
+
     
         
 
