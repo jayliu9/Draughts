@@ -61,9 +61,9 @@ class DrawingUI:
 
             elif self.game_state.stage == self.game_state.MOVE_SELECTED or self.game_state.stage == self.game_state.CONTINUE_MOVE_SELECTED:
                 if self.game_state.contains_cpt_move(self.game_state.all_move_lst):
-                    if self.game_state.is_cpt_move(row, col):
+                    if self.game_state.is_cpt_end_location(row, col):
                         self.game_state.move_occurs(row, col)
-                        if self.game_state.is_king_upgrading_move(row, col):
+                        if self.game_state.is_king_upgrading_move(row):
                             pre_row = self.game_state.clicks[0][0]
                             pre_col = self.game_state.clicks[0][1]
                             self.game_state.squares[pre_row][pre_col].becomes_king()
@@ -105,7 +105,7 @@ class DrawingUI:
                         self.game_state.reset_valid_move_lst()
                 elif self.game_state.is_psb_end_location(row, col):
                         self.game_state.move_occurs(row, col)
-                        if self.game_state.is_king_upgrading_move(row, col):
+                        if self.game_state.is_king_upgrading_move(row):
                             pre_row = self.game_state.clicks[0][0]
                             pre_col = self.game_state.clicks[0][1]
                             self.game_state.squares[pre_row][pre_col].becomes_king()
@@ -147,7 +147,7 @@ class DrawingUI:
                     ai_end_row = chosen_ai_move.end[0]
                     ai_end_col = chosen_ai_move.end[1]
                     self.game_state.move_occurs(ai_end_row, ai_end_col)
-                    if self.game_state.is_king_upgrading_move(ai_end_row, ai_end_col):
+                    if self.game_state.is_king_upgrading_move(ai_end_row):
                         ai_pre_row = self.game_state.clicks[0][0]
                         ai_pre_col = self.game_state.clicks[0][1]
                         self.game_state.squares[ai_pre_row][ai_pre_col].becomes_king()
