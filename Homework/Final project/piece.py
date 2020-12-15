@@ -16,8 +16,8 @@ class Piece:
         self.is_king = False
 
     def initial_direction(self):
-        BLACK = "b"
-        RED = "r"
+        BLACK = 0
+        RED = 1
         B_RGL_DIRECTION = [[1, -1], [1, 1]]
         R_RGL_DIRECTION = [[-1, -1], [-1, 1]]
 
@@ -31,3 +31,6 @@ class Piece:
 
         self.directions = KING_DIRECTION
         self.is_king = True
+
+    def __str__(self):
+        return str(self.color)

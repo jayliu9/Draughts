@@ -8,6 +8,7 @@ Semester: Fall 2020
 This code is drawing UI class.
 '''
 import turtle
+from gamestate import GameState
 
 
 class DrawingUI:
@@ -22,8 +23,193 @@ class DrawingUI:
     KING_MARK_SIZE = 10
 
     def __init__(self):
+        self.game_state = GameState()
         self.initial_board()
         self.black_turn_notion()
+        self.screen.onclick(self.click_handler)
+        turtle.done()
+
+    def click_handler(self, x, y):
+        '''
+            Function -- click_handler
+                Called when a click occurs.
+            Parameters:
+                x -- X coordinate of the click. Automatically provided by Turtle.
+                y -- Y coordinate of the click. Automatically provided by Turtle.
+            Returns:
+                Does not and should not return. Click handlers are a special type
+                of function automatically called by Turtle. You will not have
+                access to anything returned by this function.
+        '''
+        CAPTURE_MOVE_HINT = "Attention: There exists a capturing move somewhere. Please try again."
+        INVALID_MOVE_WARNING = "Warning: Invalid move."
+        CONTINUE_CAPTURE_HINT = "Attention: You can continue to capture with the piece you just selected."
+
+        #try:
+        if self.game_state.current_player == self.game_state.BLACK:
+            #self.click_validator(x, y)
+            row = self.get_square(y)
+            col = self.get_square(x)
+            self.remove_hint()
+            if self.game_state.stage == self.game_state.PIECE_SELECTED:
+                if self.game_state.contains_cur_piece(row, col):
+                    self.game_state.selection_occurs(row, col)
+                    self.game_state.a_piece_move(row, col)
+                    self.choosing_notation()
+                    self.game_state.stage_of_move()
+                    
+
+            elif self.game_state.stage == self.game_state.MOVE_SELECTED or self.game_state.stage == self.game_state.CONTINUE_MOVE_SELECTED:
+                if self.game_state.contains_cpt_move(self.game_state.all_move_lst):
+                    if self.game_state.is_cpt_move(row, col):
+                        self.game_state.move_occurs(row, col)
+                        if self.game_state.is_king_upgrading_move(row, col):
+                            pre_row = self.game_state.clicks[0][0]
+                            pre_col = self.game_state.clicks[0][1]
+                            self.game_state.squares[pre_row][pre_col].becomes_king()
+                        self.game_state.updates_board()
+                        self.game_state.reset_endlocations_lst()
+                        self.game_state.reset_valid_move_lst()
+                        self.draw_board()
+
+                        self.game_state.a_piece_move(row, col)
+                        if self.game_state.contains_cpt_move(self.game_state.valid_moves):
+                            self.game_state.stage_of_continue_move()
+                            self.game_state.selection_occurs(row, col)
+                            self.game_state.get_cpt_end_locations()
+                            self.choosing_notation()
+                        else:
+                            self.game_state.switches_turn()
+                            self.game_state.all_pieces_move()
+                            self.game_state.stage_of_selection()
+                    elif self.game_state.contains_cur_piece(row, col):
+                        self.game_state.a_piece_move(row, col)
+                        if self.game_state.stage == self.game_state.MOVE_SELECTED:
+                            self.game_state.selection_occurs(row, col)
+                            self.choosing_notation()
+                        elif row == self.game_state.clicks[0][0] and col == self.game_state.clicks[0][1]:
+                            self.game_state.get_cpt_end_locations()
+                            self.choosing_notation()
+                        else:
+                            print(CONTINUE_CAPTURE_HINT)    
+                    else:
+                        if self.game_state.stage == self.game_state.MOVE_SELECTED:
+                            self.game_state.stage_of_selection()
+                            if self.game_state.is_psb_end_location(row, col):
+                                print(CAPTURE_MOVE_HINT)
+                            else:
+                                print(INVALID_MOVE_WARNING)
+                        else:
+                            print(CONTINUE_CAPTURE_HINT)
+                        self.game_state.reset_endlocations_lst()
+                        self.game_state.reset_valid_move_lst()
+                elif self.game_state.is_psb_end_location(row, col):
+                        self.game_state.move_occurs(row, col)
+                        if self.game_state.is_king_upgrading_move(row, col):
+                            pre_row = self.game_state.clicks[0][0]
+                            pre_col = self.game_state.clicks[0][1]
+                            self.game_state.squares[pre_row][pre_col].becomes_king()
+                        self.game_state.updates_board()
+                        self.game_state.reset_endlocations_lst()
+                        self.game_state.reset_valid_move_lst()
+                        self.draw_board()
+
+                        self.game_state.switches_turn()
+                        self.game_state.all_pieces_move()
+                        self.game_state.stage_of_selection()
+                elif self.game_state.contains_cur_piece(row, col):
+                    self.game_state.selection_occurs(row, col)
+                    self.game_state.a_piece_move(row, col)
+                    self.choosing_notation()
+                else:
+                    print(INVALID_MOVE_WARNING)
+                    self.game_state.reset_endlocations_lst()
+                    self.game_state.reset_valid_move_lst()
+                    self.game_state.stage_of_selection()
+
+            self.notion_display()
+
+        if self.game_state.current_player == self.game_state.RED:
+            self.remove_hint()
+
+            if not self.game_state.game_over():
+                chosen_ai_move = self.game_state.get_random_ai_move(self.game_state.all_move_lst)
+                ai_start_row = chosen_ai_move.start[0]
+                ai_start_col = chosen_ai_move.start[1]
+                self.game_state.selection_occurs(ai_start_row, ai_start_col)
+                self.game_state.a_piece_move(ai_start_row, ai_start_col)
+                self.choosing_notation()
+                self.game_state.stage_of_move()
+
+                while self.game_state.stage == self.game_state.MOVE_SELECTED or self.game_state.stage == self.game_state.CONTINUE_MOVE_SELECTED:
+                    self.remove_hint()
+                    print("loop")
+                    ai_end_row = chosen_ai_move.end[0]
+                    ai_end_col = chosen_ai_move.end[1]
+                    self.game_state.move_occurs(ai_end_row, ai_end_col)
+                    if self.game_state.is_king_upgrading_move(ai_end_row, ai_end_col):
+                        ai_pre_row = self.game_state.clicks[0][0]
+                        ai_pre_col = self.game_state.clicks[0][1]
+                        self.game_state.squares[ai_pre_row][ai_pre_col].becomes_king()
+                    self.game_state.updates_board()
+                    self.game_state.reset_endlocations_lst()
+                    self.game_state.reset_valid_move_lst()
+                    self.draw_board()
+                    self.game_state.a_piece_move(ai_end_row, ai_end_col)
+                    if chosen_ai_move.is_capt and self.game_state.contains_cpt_move(self.game_state.valid_moves):
+                        self.game_state.stage_of_continue_move()
+                        self.game_state.selection_occurs(ai_end_row, ai_end_col)
+                        self.game_state.get_cpt_end_locations()
+                        self.choosing_notation()
+                        chosen_ai_move = self.game_state.get_random_ai_move(self.game_state.valid_moves)
+                    else:
+                        self.game_state.switches_turn()
+                        self.game_state.all_pieces_move()
+                        self.game_state.stage_of_selection()
+                self.notion_display()
+
+                if self.game_state.game_over():
+                    print("Game Over. You lost!")
+                    self.screen.onclick(None)
+
+            else:
+                print("Game Over. You win!")
+                self.screen.onclick(None)
+        #except:
+            #print("out of range")
+
+
+    def get_square(self, coord):
+        return int((coord - self.CORNER) // self.SQUARE)
+
+
+    def remove_hint(self):
+        selection_click = self.game_state.clicks[0]
+        chosen_row = selection_click[0]
+        chosen_col = selection_click[1]
+        self.remove_choice_mark(chosen_row, chosen_col)
+        for end_location in self.game_state.valid_end_locations:
+            row_to_move = end_location[0]
+            col_to_move = end_location[1]
+            self.remove_move_mark(row_to_move, col_to_move)
+    
+
+    def click_validator(self, x, y):
+        '''
+            Function -- click_validation
+                Checks that the click was in bounds of the board.
+            Parameters:
+                x -- X coordinate of the click. Automatically provided by Turtle.
+                y -- Y coordinate of the click. Automatically provided by Turtle.
+            Raises:
+                ValueError -- If the click was out of bounds of the board.
+            Returns:
+                Nothing
+        '''
+        out_of_bounds = x < self.CORNER or x > -self.CORNER or y > -self.CORNER or y < self.CORNER
+        if out_of_bounds:
+            raise ValueError
+
 
     def draw_square(self, size):
         '''
@@ -60,38 +246,23 @@ class DrawingUI:
         self.pen.end_fill()
         self.pen.penup()
     
-    def black_pieces_starting_row(self, row):
-        '''
-            Method -- black_pieces_starting_row
-                Checks if the row is the starting position of black pieces, which 
-                is from the bottom row of the board to row 2 (the bottom row of the 
-                board is counted row 0).
-            Parameters:
-                row -- the row number
-            Returns:
-                True if the row is one of the starting row of black pieces, False
-                otherwise.
-        '''
-        LOWEREST_BLACK_STARTING_ROW = 0
-        HIGHEST_BLACK_STARTING_ROW = 2
-        return (row <= HIGHEST_BLACK_STARTING_ROW and
-                row >= LOWEREST_BLACK_STARTING_ROW)
-        
-    def red_pieces_starting_row(self, row):
-        '''
-            Method -- red_pieces_starting_row
-                Checks if the row is the starting position of red pieces, which is
-                from the top row of the board to row 5 (the bottom row of the board
-                is counted row 0).
-            Parameters:
-                row -- the row number
-            Returns:
-                True if the row is one of the starting row of red pieces, False
-                otherwise.
-        '''
-        LOWEREST_RED_STARTING_ROW = 5
-        HIGHEST_RED_STARTING_ROW = 7
-        return row >= LOWEREST_RED_STARTING_ROW and row <= HIGHEST_RED_STARTING_ROW
+
+    def draw_board(self):
+        cells = self.game_state.squares
+        for row in range(self.game_state.NUM_SQUARES):
+            for col in range(self.game_state.NUM_SQUARES):
+                if col % 2 != row % 2:
+                    self.pen.color("black", self.SQUARE_COLORS[0])
+                    self.pen.setposition(self.CORNER + self.SQUARE * col, self.CORNER + self.SQUARE * row)
+                    self.draw_square(self.SQUARE)
+                    if self.game_state.contains_any_piece(row, col):
+                        a_piece = cells[row][col]
+                        piece_color = a_piece.color
+                        self.pen.color(self.PIECE_COLORS[piece_color])
+                        self.pen.setposition(self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS, self.CORNER + self.SQUARE * row)
+                        self.draw_circle(self.CIRCLE_RADIUS)
+                        if a_piece.is_king:
+                            self.king_mark(row, col)
 
     def draws_nonfilled_square(self, size):
         RIGHT_ANGLE = 90
@@ -101,17 +272,21 @@ class DrawingUI:
             self.pen.left(RIGHT_ANGLE)
         self.pen.penup()
     
-    def choosing_notation(self, row, col, valid_end_locations):
+    def choosing_notation(self):
         CHOOSING_COLOR = "light green"
         ORIGINAL_COLOR = "black"
         HINT_COLOR = "red"
 
-        self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
+        selection_click = self.game_state.clicks[0]
+        chosen_row = selection_click[0]
+        chosen_col = selection_click[1]
+
+        self.pen.setposition(self.CORNER + chosen_col * self.SQUARE, self.CORNER + chosen_row * self.SQUARE)
         self.pen.color(CHOOSING_COLOR)
         self.draws_nonfilled_square(self.SQUARE)
 
         self.pen.color(HINT_COLOR)
-        for end_location in valid_end_locations:
+        for end_location in self.game_state.valid_end_locations:
             next_row = end_location[0]
             next_col = end_location[1]
             self.pen.setposition(self.CORNER + next_col * self.SQUARE,
@@ -129,39 +304,6 @@ class DrawingUI:
         self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
         self.draws_nonfilled_square(self.SQUARE)
 
-    def move_piece(self, current_player, piece_location, new_location, piece):
-        BLACK_PLAYER = "b"
-        RED_PLAYER = "r"
-
-        pre_row = piece_location[0]
-        pre_col = piece_location[1]
-        post_row = new_location[0]
-        post_col = new_location[1]
-        self.pen.color("black", self.SQUARE_COLORS[0])
-        self.pen.setposition(self.CORNER + self.SQUARE * pre_col,
-                             self.CORNER + self.SQUARE * pre_row)
-        self.draw_square(self.SQUARE)
-        if current_player == BLACK_PLAYER:
-            self.pen.color(self.PIECE_COLORS[0], self.PIECE_COLORS[0])
-        else:
-            self.pen.color(self.PIECE_COLORS[1], self.PIECE_COLORS[1])
-        self.pen.setposition(self.CORNER + self.SQUARE * post_col + self.CIRCLE_RADIUS,
-                             self.CORNER + self.SQUARE * post_row)
-        self.draw_circle(self.CIRCLE_RADIUS)
-        if piece.is_king:
-            self.king_mark(post_row, post_col)
-
-    def cpt_move_piece(self, current_player, piece_location, new_location, piece):
-        MIDDLE = 0.5
-        self.move_piece(current_player, piece_location, new_location, piece)
-        self.pen.color("black", self.SQUARE_COLORS[0])
-
-        removed_row = (piece_location[0] + new_location[0]) * MIDDLE
-        removed_col = (piece_location[1] + new_location[1]) * MIDDLE
-        self.pen.setposition(self.CORNER + self.SQUARE * removed_col,
-                             self.CORNER + self.SQUARE * removed_row)
-        self.draw_square(self.SQUARE)
-
     def initial_board(self):
         turtle.setup(self.WINDOW_SIZE, self.WINDOW_SIZE)
         turtle.screensize(self.BOARD_SIZE, self.BOARD_SIZE)
@@ -176,22 +318,8 @@ class DrawingUI:
         self.pen.setposition(self.CORNER, self.CORNER)
         self.draw_square(self.BOARD_SIZE)
 
-        for col in range(self.NUM_SQUARES):
-            for row in range(self.NUM_SQUARES):
-                if col % 2 != row % 2:
-                    self.pen.color("black", self.SQUARE_COLORS[0])
-                    self.pen.setposition(self.CORNER + self.SQUARE * col, self.CORNER + self.SQUARE * row)
-                    self.draw_square(self.SQUARE)
-                    if (self.black_pieces_starting_row(row) or
-                        self.red_pieces_starting_row(row)):
-                        if self.black_pieces_starting_row(row):
-                            self.pen.color(self.PIECE_COLORS[0], self.PIECE_COLORS[0])
-                        else:
-                            self.pen.color(self.PIECE_COLORS[1], self.PIECE_COLORS[1])
-                        self.pen.setposition(self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS,
-                                             self.CORNER + self.SQUARE * row)
-                        self.draw_circle(self.CIRCLE_RADIUS)
-    
+        self.draw_board()
+
     def notion_frame(self):
         self.pen.color("black", "white")
         self.pen.setposition(self.CORNER - 1 * self.SQUARE, self.CORNER + 3.5 * self.SQUARE)
@@ -218,3 +346,8 @@ class DrawingUI:
                              self.CORNER + self.SQUARE * row + self.CIRCLE_RADIUS - self.KING_MARK_SIZE)
         self.draw_circle(self.KING_MARK_SIZE)
 
+    def notion_display(self):
+        if self.game_state.current_player == self.game_state.RED:
+            self.red_turn_notion()
+        else:
+            self.black_turn_notion()
