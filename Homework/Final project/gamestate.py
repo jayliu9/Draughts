@@ -434,7 +434,7 @@ class GameState:
         return [row, col] in self.valid_end_locations
 
     def all_cur_pieces_captured(self):
-            '''
+        '''
             Method -- all_cur_pieces_captured
                 Checks if the current player's pieces on the board are captured
             Parameters:
