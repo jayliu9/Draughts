@@ -42,30 +42,30 @@ def test_constructor():
 
 def test_contains_any_piece():
     game = GameState()
-    assert(game.contains_any_piece(0, 7) is True)
-    assert(game.contains_any_piece(6, 3) is True)
-    assert(game.contains_any_piece(3, 4) is False)
+    assert(game.contains_any_piece(0, 7))
+    assert(game.contains_any_piece(6, 3))
+    assert(not game.contains_any_piece(3, 4))
 
 
 def test_contains_cur_piece():
     game = GameState()
-    assert(game.contains_cur_piece(0, 7) is True)
-    assert(game.contains_cur_piece(6, 3) is False)
-    assert(game.contains_cur_piece(3, 4) is False)
+    assert(game.contains_cur_piece(0, 7))
+    assert(not game.contains_cur_piece(6, 3))
+    assert(not game.contains_cur_piece(3, 4))
 
     game.switches_turn()
 
-    assert(game.contains_cur_piece(0, 7) is False)
-    assert(game.contains_cur_piece(6, 3) is True)
-    assert(game.contains_cur_piece(3, 4) is False)
+    assert(not game.contains_cur_piece(0, 7))
+    assert(game.contains_cur_piece(6, 3))
+    assert(not game.contains_cur_piece(3, 4))
 
 
 def test_out_of_index():
     game = GameState()
-    assert(game.out_of_index(-1, 0) is True)
-    assert(game.out_of_index(10, 3) is True)
-    assert(game.out_of_index(6, 4) is False)
-    assert(game.out_of_index(-1, 8) is True)
+    assert(game.out_of_index(-1, 0))
+    assert(game.out_of_index(10, 3))
+    assert(not game.out_of_index(6, 4))
+    assert(game.out_of_index(-1, 8))
 
 
 def test_psb_noncpt_move():
@@ -103,8 +103,8 @@ def test_psb_cpt_move():
 
 def test_is_empty_lst():
     game = GameState()
-    assert(game.is_empty_lst([]) is True)
-    assert(game.is_empty_lst([[4, 1], [4, 3]]) is False)
+    assert(game.is_empty_lst([]))
+    assert(not game.is_empty_lst([[4, 1], [4, 3]]))
 
 
 def test_a_piece_move():
@@ -261,12 +261,12 @@ def test_switches_turn():
 
 def test_is_king_upgrading_move():
     game = GameState()
-    assert(game.is_king_upgrading_move(5) is False)
-    assert(game.is_king_upgrading_move(7) is True)
+    assert(not game.is_king_upgrading_move(5))
+    assert(game.is_king_upgrading_move(7))
 
     game.switches_turn()
-    assert(game.is_king_upgrading_move(3) is False)
-    assert(game.is_king_upgrading_move(0) is True)
+    assert(not game.is_king_upgrading_move(3))
+    assert(game.is_king_upgrading_move(0))
 
 
 def test_contains_cpt_move():
@@ -280,8 +280,8 @@ def test_contains_cpt_move():
                          Move([2, 5], [3, 4], False),
                          Move([2, 7], [3, 6], False)]
 
-    assert(game.contains_cpt_move(have_capt_move_list) is True)
-    assert(game.contains_cpt_move(no_capt_move_list) is False)
+    assert(game.contains_cpt_move(have_capt_move_list))
+    assert(not game.contains_cpt_move(no_capt_move_list))
 
 
 def test_is_cpt_end_location():
@@ -303,9 +303,9 @@ def test_is_cpt_end_location():
 
     # If the black piece in 2, 1 is considered to be moved
     game.a_piece_move(2, 1)
-    assert(game.is_cpt_end_location(4, 3) is True)
-    assert(game.is_cpt_end_location(2, 1) is False)
-    assert(game.is_cpt_end_location(4, 1) is False)
+    assert(game.is_cpt_end_location(4, 3))
+    assert(not game.is_cpt_end_location(2, 1))
+    assert(not game.is_cpt_end_location(4, 1))
 
 
 def test_get_cpt_end_locations():
@@ -341,16 +341,16 @@ def test_is_psb_end_location():
     game = GameState()
 
     game.a_piece_move(2, 1)
-    assert(game.is_psb_end_location(3, 0) is True)
-    assert(game.is_psb_end_location(3, 2) is True)
-    assert(game.is_psb_end_location(3, 6) is False)
+    assert(game.is_psb_end_location(3, 0))
+    assert(game.is_psb_end_location(3, 2))
+    assert(not game.is_psb_end_location(3, 6))
 
 
 def test_all_cur_pieces_captured():
     game = GameState()
     black_p = Piece(BLACK)
     red_p = Piece(RED)
-    assert(game.all_cur_pieces_captured() is False)
+    assert(not game.all_cur_pieces_captured())
     # Assume that all the black pieces are captured on this board
     game.squares = [
         [-1, -1, -1, -1, -1, -1, -1, -1],
@@ -363,14 +363,14 @@ def test_all_cur_pieces_captured():
         [-1, -1, -1, -1, -1, -1, -1, -1]
     ]
     game.all_pieces_move()
-    assert(game.all_cur_pieces_captured() is True)
+    assert(game.all_cur_pieces_captured())
 
 
 def test_game_over():
     game = GameState()
     black_p = Piece(BLACK)
     red_p = Piece(RED)
-    assert(game.game_over() is False)
+    assert(not game.game_over())
     # Assume that all the black pieces are captured on this board
     game.squares = [
         [-1, -1, -1, -1, -1, -1, -1, -1],
@@ -383,7 +383,7 @@ def test_game_over():
         [-1, -1, -1, -1, -1, -1, -1, -1]
     ]
     game.all_pieces_move()
-    assert(game.game_over() is True)
+    assert(game.game_over())
     
     # Assume that all the remaining black pieces have no place to move to.
     game.squares = [
@@ -397,7 +397,7 @@ def test_game_over():
         [-1, -1, -1, -1, -1, -1, -1, -1]
     ]
     game.all_pieces_move()
-    assert(game.game_over() is True)
+    assert(game.game_over())
 
 
 def test_get_cpt_moves():
