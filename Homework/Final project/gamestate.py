@@ -28,10 +28,11 @@ class GameState:
             valid_end_locations -- A list storing the valid end locations of a
             piece considered to be moved.
             all_move_lst -- A list containing all possible moves of all pieces.
+            chosen_ai_move -- A move randomly chosen by computer for AI move.
         Methods:
-            contains_any_piece -- Checks whether or not the square contains a
+            contain_any_piece -- Checks whether or not the square contains a
             piece.
-            contains_cur_piece -- Checks whether or not the square contains a
+            contain_cur_piece -- Checks whether or not the square contains a
             piece that belongs to current player.
             out_of_index -- Checks if the given location, a row/col, is in
             bounds of the squares list.
@@ -48,7 +49,7 @@ class GameState:
             be moved.
             all_pieces_move -- Updates the list containing all possible moves
             of all pieces.
-            updates_board -- Updates the squares list to update the state of 
+            update_board -- Updates the squares list to update the state of 
             the board.
             selection_occurs -- Updates the selection click in the clicks list.
             stage_of_selection -- Updates the stage of the turn to the
@@ -57,11 +58,11 @@ class GameState:
             stage_of_continue_move -- Updates the stage of the turn to the
             continuous move stage.
             move_occurs -- Updates the move click in the clicks list.
-            switches_turn -- Switches the turn and updates the current player.
+            switch_turn -- Switches the turn and updates the current player.
             is_king_upgrading_move -- Checks if the end location of a move
             reaches to the opposite side of the board to makes the piece a
             king.
-            contains_cpt_move -- Checks if the given list contains any
+            contain_cpt_move -- Checks if the given list contains any
             capturing moves.
             is_empty_lst -- Checks if the given list is empty.
             is_cpt_end_location -- Checks if the given end location is one of
@@ -74,9 +75,9 @@ class GameState:
             the board are captured
             game_over -- Checks if the game is over.
             get_cpt_moves -- Gets all capturing moves from the given list.
-            get_random_ai_move -- Randomly chooses a move from the given move
-            list. Non-capturing moves in the given list will be ignored if
-            there exist capturing moves in the list. 
+            get_random_ai_move -- Randomly chooses a move from the given move 
+            list to update the AI move. Non-capturing moves in the given list
+            will be ignored if there exist capturing moves in the list.
     '''
     NUM_SQUARES = 8
     SQUARE = 50
@@ -88,16 +89,22 @@ class GameState:
     INITIAL_CLICK_LIST = [[0, 0], [0, 0]]
 
     INITIAL_POSITION = [
-        [EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY, Piece(BLACK)],
-        [Piece(BLACK), EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY],
-        [EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY, Piece(BLACK)],
+        [EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY,
+         Piece(BLACK)],
+        [Piece(BLACK), EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY,
+         Piece(BLACK), EMPTY],
+        [EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY, Piece(BLACK), EMPTY,
+         Piece(BLACK)],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-        [Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY],
-        [EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED)],
-        [Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY]
+        [Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED),
+         EMPTY],
+        [EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY,
+         Piece(RED)],
+        [Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED), EMPTY, Piece(RED),
+         EMPTY]
     ]
-    CONTINUE_MOVE_SELECTED = 2
+    CONTINUE_MOVE = 2
     PIECE_SELECTED = 0
     MOVE_SELECTED = 1
 
@@ -114,10 +121,11 @@ class GameState:
         self.valid_moves = []
         self.valid_end_locations = []
         self.all_pieces_move()
+        self.chosen_ai_move = None
 
-    def contains_any_piece(self, row, col):
+    def contain_any_piece(self, row, col):
         '''
-            Method -- contains_any_piece
+            Method -- contain_any_piece
                 Checks whether or not the square contains a piece.
             Parameters:
                 self -- The current GameState object.
@@ -129,9 +137,9 @@ class GameState:
         '''
         return self.squares[row][col] != self.EMPTY
 
-    def contains_cur_piece(self, row, col):
+    def contain_cur_piece(self, row, col):
         '''
-            Method -- contains_cur_piece
+            Method -- contain_cur_piece
                 Checks whether or not the square contains a piece that belongs
                 to current player.
             Parameters:
@@ -142,7 +150,7 @@ class GameState:
                 True if the square in the given location contains a piece that
                 belong to current player, False otherwise.
         '''
-        if self.contains_any_piece(row, col):
+        if self.contain_any_piece(row, col):
             return self.squares[row][col].color == self.current_player
         return False
 
@@ -179,8 +187,10 @@ class GameState:
         for direction in piece.directions:
             move_row = row + direction[0]
             move_col = col + direction[1]
-            if not self.out_of_index(move_row, move_col) and not self.contains_any_piece(move_row, move_col):
-                noncpt_move_lst.append(Move([row, col], [move_row, move_col], False))
+            if (not self.out_of_index(move_row, move_col) and 
+               not self.contain_any_piece(move_row, move_col)):
+                noncpt_move_lst.append(
+                    Move([row, col], [move_row, move_col], False))
         return noncpt_move_lst
 
     def psb_cpt_move(self, row, col):
@@ -201,12 +211,16 @@ class GameState:
         for direction in piece.directions:
             move_row = row + direction[0]
             move_col = col + direction[1]
-            contains_enemy = not self.out_of_index(move_row, move_col) and self.contains_any_piece(move_row, move_col) and not self.contains_cur_piece(move_row, move_col)
+            contains_enemy = (not self.out_of_index(move_row, move_col) and
+                              self.contain_any_piece(move_row, move_col) and
+                              not self.contain_cur_piece(move_row, move_col))
             if contains_enemy:
                 next_row = move_row + direction[0]
                 next_col = move_col + direction[1]
-                if not self.out_of_index(next_row, next_col) and not self.contains_any_piece(next_row, next_col):
-                    cpt_move_lst.append(Move([row, col], [next_row, next_col], True))
+                if (not self.out_of_index(next_row, next_col) and
+                   not self.contain_any_piece(next_row, next_col)):
+                    cpt_move_lst.append(
+                        Move([row, col], [next_row, next_col], True))
         return cpt_move_lst
 
     def reset_endlocations_lst(self):
@@ -254,14 +268,14 @@ class GameState:
         move_lst = []
         for row in range(self.NUM_SQUARES):
             for col in range(self.NUM_SQUARES):
-                if self.contains_cur_piece(row, col):
+                if self.contain_cur_piece(row, col):
                     move_lst = self.psb_cpt_move(row, col) + move_lst
                     move_lst = move_lst + self.psb_noncpt_move(row, col)
         self.all_move_lst = move_lst
 
-    def updates_board(self):
+    def update_board(self):
         '''
-            Method -- updates_board
+            Method -- update_board
                 Updates the squares list to update the state of the board.
             Parameters:
                 self -- The current GameState object
@@ -316,7 +330,7 @@ class GameState:
             Parameters:
                 self -- The current GameState object
         '''
-        self.stage = self.CONTINUE_MOVE_SELECTED
+        self.stage = self.CONTINUE_MOVE
 
     def move_occurs(self, row, col):
         '''
@@ -329,9 +343,9 @@ class GameState:
         '''
         self.clicks[1] = [row, col] 
 
-    def switches_turn(self):
+    def switch_turn(self):
         '''
-            Method -- switches_turn
+            Method -- switch_turn
                 Switches the turn and updates the current player.
             Parameters:
                 self -- The current GameState object
@@ -356,11 +370,12 @@ class GameState:
         TOP_ROW = 7
         BOTTOM_ROW = 0
         
-        return self.current_player == self.BLACK and row == TOP_ROW or self.current_player == self.RED and row == BOTTOM_ROW
+        return (self.current_player == self.BLACK and row == TOP_ROW or
+                self.current_player == self.RED and row == BOTTOM_ROW)
     
-    def contains_cpt_move(self, move_lst):
+    def contain_cpt_move(self, move_lst):
         '''
-            Method -- contains_cpt_move
+            Method -- contain_cpt_move
                 Checks if the given list contains any capturing moves.
             Parameters:
                 self -- The current GameState object
@@ -445,7 +460,7 @@ class GameState:
         are_captured = True
         for row in range(self.NUM_SQUARES):
             for col in range(self.NUM_SQUARES):
-                if self.contains_cur_piece(row, col):
+                if self.contain_cur_piece(row, col):
                     are_captured = False
         return are_captured
 
@@ -458,7 +473,8 @@ class GameState:
             Returns:
                 True if the game is over, False otherwise.
         '''
-        return self.is_empty_lst(self.all_move_lst) or self.all_cur_pieces_captured()
+        return (self.is_empty_lst(self.all_move_lst) or
+                self.all_cur_pieces_captured())
 
     def get_cpt_moves(self, move_lst):
         '''
@@ -479,16 +495,13 @@ class GameState:
     def get_random_ai_move(self, all_possible_moves):
         '''
             Method -- get_random_ai_move
-                Randomly chooses a move from the given move list. Non-capturing
-                moves in the given list will be ignored if there exist
-                capturing moves in the list. 
+                Randomly chooses a move from the given move list to update
+                the AI move. Non-capturing moves in the given list will be
+                ignored if there exist capturing moves in the list. 
             Parameters:
                 self -- The current GameState object
                 all_possible_moves -- The given move list
-            Returns:
-                A random move from the given list.
         '''
-        if self.contains_cpt_move(all_possible_moves):
+        if self.contain_cpt_move(all_possible_moves):
             all_possible_moves = self.get_cpt_moves(all_possible_moves)
-        ai_move = random.choice(all_possible_moves)
-        return ai_move
+        self.chosen_ai_move = random.choice(all_possible_moves)

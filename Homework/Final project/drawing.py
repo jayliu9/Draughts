@@ -36,6 +36,7 @@ class DrawingUI:
     INDICATOR_Y_COORD = CORNER + 3.5 * SQUARE
     INDICATOR_SQUARE_SIZE = 0.5 * SQUARE
     TURN_SIGN_RADUIS = 0.5 * CIRCLE_RADIUS
+    DELAY_TIME = 500
 
     def __init__(self):
         '''
@@ -58,143 +59,112 @@ class DrawingUI:
                 x -- X coordinate of the click.
                 y -- Y coordinate of the click.
         '''
-        CAPTURE_MOVE_HINT = "Attention: There exists a capturing move somewhere. Please try again."
+        CAPTURE_MOVE_HINT = ("Attention: " + 
+                             "There exists a capturing move somewhere. " +
+                             "Please try again.")
         INVALID_MOVE_WARNING = "Warning: Invalid move."
-        CONTINUE_CAPTURE_HINT = "Attention: You can continue to capture with the piece you just selected."
-
-        #try:
-        if self.game_state.current_player == self.game_state.BLACK:
-            #self.click_validator(x, y)
-            row = self.convert_to_location(y)
-            col = self.convert_to_location(x)
-            self.remove_mark()
-            if self.game_state.stage == self.game_state.PIECE_SELECTED:
-                if self.game_state.contains_cur_piece(row, col):
-                    self.game_state.selection_occurs(row, col)
-                    self.game_state.a_piece_move(row, col)
-                    self.draw_highlighting_mark()
-                    self.game_state.stage_of_move()
-                    
-
-            elif self.game_state.stage == self.game_state.MOVE_SELECTED or self.game_state.stage == self.game_state.CONTINUE_MOVE_SELECTED:
-                if self.game_state.contains_cpt_move(self.game_state.all_move_lst):
-                    if self.game_state.is_cpt_end_location(row, col):
-                        self.game_state.move_occurs(row, col)
-                        if self.game_state.is_king_upgrading_move(row):
-                            pre_row = self.game_state.clicks[0][0]
-                            pre_col = self.game_state.clicks[0][1]
-                            self.game_state.squares[pre_row][pre_col].become_king()
-                        self.game_state.updates_board()
-                        self.game_state.reset_endlocations_lst()
-                        self.game_state.reset_valid_move_lst()
-                        self.draw_board()
-
+        CONTINUE_CAPTURE_HINT = ("Attention: " +
+                                 "You can continue to capture " +
+                                 "with the piece you just selected.")
+        try:
+            if self.game_state.current_player == self.game_state.BLACK:
+                self.click_validator(x, y)
+                row = self.convert_to_location(y)
+                col = self.convert_to_location(x)
+                self.remove_mark()
+                if self.game_state.stage == self.game_state.PIECE_SELECTED:
+                    if self.game_state.contain_cur_piece(row, col):
+                        self.game_state.selection_occurs(row, col)
                         self.game_state.a_piece_move(row, col)
-                        if self.game_state.contains_cpt_move(self.game_state.valid_moves):
-                            self.game_state.stage_of_continue_move()
-                            self.game_state.selection_occurs(row, col)
-                            self.game_state.get_cpt_end_locations()
-                            self.draw_highlighting_mark()
+                        self.draw_highlighting_mark()
+                        self.game_state.stage_of_move()
+                elif (self.game_state.stage == self.game_state.MOVE_SELECTED or
+                      self.game_state.stage == self.game_state.CONTINUE_MOVE):
+                    if self.game_state.contain_cpt_move(
+                       self.game_state.all_move_lst):
+                        if self.game_state.is_cpt_end_location(row, col):
+                            self.game_state.move_occurs(row, col)
+                            if self.game_state.is_king_upgrading_move(row):
+                                pre_row = self.game_state.clicks[0][0]
+                                pre_col = self.game_state.clicks[0][1]
+                                self.game_state.squares[pre_row][pre_col].become_king()
+                            self.game_state.update_board()
+                            self.game_state.reset_endlocations_lst()
+                            self.game_state.reset_valid_move_lst()
+                            self.draw_board()
+
+                            self.game_state.a_piece_move(row, col)
+                            if self.game_state.contain_cpt_move(
+                               self.game_state.valid_moves):
+                                self.game_state.stage_of_continue_move()
+                                self.game_state.selection_occurs(row, col)
+                                self.game_state.get_cpt_end_locations()
+                                self.draw_highlighting_mark()
+                            else:
+                                self.game_state.switch_turn()
+                                self.game_state.all_pieces_move()
+                                self.game_state.stage_of_selection()
+                        elif self.game_state.contain_cur_piece(row, col):
+                            self.game_state.a_piece_move(row, col)
+                            if (self.game_state.stage ==
+                               self.game_state.MOVE_SELECTED):
+                                self.game_state.selection_occurs(row, col)
+                                self.draw_highlighting_mark()
+                            elif (row == self.game_state.clicks[0][0] and
+                                  col == self.game_state.clicks[0][1]):
+                                self.game_state.get_cpt_end_locations()
+                                self.draw_highlighting_mark()
+                            else:
+                                print(CONTINUE_CAPTURE_HINT)    
                         else:
-                            self.game_state.switches_turn()
+                            if (self.game_state.stage ==
+                               self.game_state.MOVE_SELECTED):
+                                self.game_state.stage_of_selection()
+                                if self.game_state.is_psb_end_location(row,
+                                                                       col):
+                                    print(CAPTURE_MOVE_HINT)
+                                else:
+                                    print(INVALID_MOVE_WARNING)
+                            else:
+                                print(CONTINUE_CAPTURE_HINT)
+                            self.game_state.reset_endlocations_lst()
+                            self.game_state.reset_valid_move_lst()
+                    elif self.game_state.is_psb_end_location(row, col):
+                            self.game_state.move_occurs(row, col)
+                            if self.game_state.is_king_upgrading_move(row):
+                                pre_row = self.game_state.clicks[0][0]
+                                pre_col = self.game_state.clicks[0][1]
+                                self.game_state.squares[pre_row][pre_col].become_king()
+                            self.game_state.update_board()
+                            self.game_state.reset_endlocations_lst()
+                            self.game_state.reset_valid_move_lst()
+                            self.draw_board()
+
+                            self.game_state.switch_turn()
                             self.game_state.all_pieces_move()
                             self.game_state.stage_of_selection()
-                    elif self.game_state.contains_cur_piece(row, col):
+                    elif self.game_state.contain_cur_piece(row, col):
+                        self.game_state.selection_occurs(row, col)
                         self.game_state.a_piece_move(row, col)
-                        if self.game_state.stage == self.game_state.MOVE_SELECTED:
-                            self.game_state.selection_occurs(row, col)
-                            self.draw_highlighting_mark()
-                        elif row == self.game_state.clicks[0][0] and col == self.game_state.clicks[0][1]:
-                            self.game_state.get_cpt_end_locations()
-                            self.draw_highlighting_mark()
-                        else:
-                            print(CONTINUE_CAPTURE_HINT)    
-                    else:
-                        if self.game_state.stage == self.game_state.MOVE_SELECTED:
-                            self.game_state.stage_of_selection()
-                            if self.game_state.is_psb_end_location(row, col):
-                                print(CAPTURE_MOVE_HINT)
-                            else:
-                                print(INVALID_MOVE_WARNING)
-                        else:
-                            print(CONTINUE_CAPTURE_HINT)
-                        self.game_state.reset_endlocations_lst()
-                        self.game_state.reset_valid_move_lst()
-                elif self.game_state.is_psb_end_location(row, col):
-                        self.game_state.move_occurs(row, col)
-                        if self.game_state.is_king_upgrading_move(row):
-                            pre_row = self.game_state.clicks[0][0]
-                            pre_col = self.game_state.clicks[0][1]
-                            self.game_state.squares[pre_row][pre_col].become_king()
-                        self.game_state.updates_board()
-                        self.game_state.reset_endlocations_lst()
-                        self.game_state.reset_valid_move_lst()
-                        self.draw_board()
-
-                        self.game_state.switches_turn()
-                        self.game_state.all_pieces_move()
-                        self.game_state.stage_of_selection()
-                elif self.game_state.contains_cur_piece(row, col):
-                    self.game_state.selection_occurs(row, col)
-                    self.game_state.a_piece_move(row, col)
-                    self.draw_highlighting_mark()
-                else:
-                    print(INVALID_MOVE_WARNING)
-                    self.game_state.reset_endlocations_lst()
-                    self.game_state.reset_valid_move_lst()
-                    self.game_state.stage_of_selection()
-
-            self.indicator_display()
-
-        if self.game_state.current_player == self.game_state.RED:
-            self.remove_mark()
-
-            if not self.game_state.game_over():
-                chosen_ai_move = self.game_state.get_random_ai_move(self.game_state.all_move_lst)
-                ai_start_row = chosen_ai_move.start[0]
-                ai_start_col = chosen_ai_move.start[1]
-                self.game_state.selection_occurs(ai_start_row, ai_start_col)
-                self.game_state.a_piece_move(ai_start_row, ai_start_col)
-                self.draw_highlighting_mark()
-                self.game_state.stage_of_move()
-
-                while self.game_state.stage == self.game_state.MOVE_SELECTED or self.game_state.stage == self.game_state.CONTINUE_MOVE_SELECTED:
-                    self.remove_mark()
-                    print("loop")
-                    ai_end_row = chosen_ai_move.end[0]
-                    ai_end_col = chosen_ai_move.end[1]
-                    self.game_state.move_occurs(ai_end_row, ai_end_col)
-                    if self.game_state.is_king_upgrading_move(ai_end_row):
-                        ai_pre_row = self.game_state.clicks[0][0]
-                        ai_pre_col = self.game_state.clicks[0][1]
-                        self.game_state.squares[ai_pre_row][ai_pre_col].become_king()
-                    self.game_state.updates_board()
-                    self.game_state.reset_endlocations_lst()
-                    self.game_state.reset_valid_move_lst()
-                    self.draw_board()
-                    self.game_state.a_piece_move(ai_end_row, ai_end_col)
-                    if chosen_ai_move.is_capt and self.game_state.contains_cpt_move(self.game_state.valid_moves):
-                        self.game_state.stage_of_continue_move()
-                        self.game_state.selection_occurs(ai_end_row, ai_end_col)
-                        self.game_state.get_cpt_end_locations()
                         self.draw_highlighting_mark()
-                        chosen_ai_move = self.game_state.get_random_ai_move(self.game_state.valid_moves)
                     else:
-                        self.game_state.switches_turn()
-                        self.game_state.all_pieces_move()
+                        print(INVALID_MOVE_WARNING)
+                        self.game_state.reset_endlocations_lst()
+                        self.game_state.reset_valid_move_lst()
                         self.game_state.stage_of_selection()
+
                 self.indicator_display()
 
-                if self.game_state.game_over():
-                    print("Game Over. You lost!")
-                    self.screen.onclick(None)
-
-            else:
-                print("Game Over. You win!")
+            if self.game_state.current_player == self.game_state.RED:
                 self.screen.onclick(None)
-        #except:
-            #print("out of range")
-
+                self.remove_mark()
+                if not self.game_state.game_over():
+                    self.screen.ontimer(self.show_ai_begin, self.DELAY_TIME)
+                else:
+                    print("Game Over. You win!")
+                    self.screen.onclick(None)
+        except:
+            print("out of range")
 
     def convert_to_location(self, coord):
         '''
@@ -207,7 +177,6 @@ class DrawingUI:
                 The index of the square that was clicked. Works for row and col
         '''
         return int((coord - self.CORNER) // self.SQUARE)
-
 
     def remove_mark(self):
         '''
@@ -226,7 +195,6 @@ class DrawingUI:
             row_to_move = end_location[0]
             col_to_move = end_location[1]
             self.remove_reachable_mark(row_to_move, col_to_move)
-    
 
     def click_validator(self, x, y):
         '''
@@ -241,10 +209,10 @@ class DrawingUI:
             Returns:
                 Nothing
         '''
-        out_of_bounds = x < self.CORNER or x > -self.CORNER or y > -self.CORNER or y < self.CORNER
+        out_of_bounds = (x < self.CORNER or x > -self.CORNER or
+                         y > -self.CORNER or y < self.CORNER)
         if out_of_bounds:
             raise ValueError
-
 
     def draw_square(self, size):
         '''
@@ -276,7 +244,6 @@ class DrawingUI:
         self.pen.circle(radius)
         self.pen.end_fill()
         self.pen.penup()
-    
 
     def draw_board(self):
         '''
@@ -290,13 +257,16 @@ class DrawingUI:
             for col in range(self.game_state.NUM_SQUARES):
                 if col % 2 != row % 2:
                     self.pen.color("black", self.SQUARE_COLORS[0])
-                    self.pen.setposition(self.CORNER + self.SQUARE * col, self.CORNER + self.SQUARE * row)
+                    self.pen.setposition(self.CORNER + self.SQUARE * col,
+                                         self.CORNER + self.SQUARE * row)
                     self.draw_square(self.SQUARE)
-                    if self.game_state.contains_any_piece(row, col):
+                    if self.game_state.contain_any_piece(row, col):
                         a_piece = cells[row][col]
                         piece_color = a_piece.color
                         self.pen.color(self.PIECE_COLORS[piece_color])
-                        self.pen.setposition(self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS, self.CORNER + self.SQUARE * row)
+                        self.pen.setposition(self.CORNER + self.SQUARE * col +
+                                             self.CIRCLE_RADIUS, self.CORNER +
+                                             self.SQUARE * row)
                         self.draw_circle(self.CIRCLE_RADIUS)
                         if a_piece.is_king:
                             self.draw_king_mark(row, col)
@@ -315,7 +285,7 @@ class DrawingUI:
             self.pen.forward(size)
             self.pen.left(RIGHT_ANGLE)
         self.pen.penup()
-    
+
     def draw_highlighting_mark(self):
         '''
             Method -- draw_highlighting_mark
@@ -333,7 +303,8 @@ class DrawingUI:
         chosen_row = selection_click[0]
         chosen_col = selection_click[1]
 
-        self.pen.setposition(self.CORNER + chosen_col * self.SQUARE, self.CORNER + chosen_row * self.SQUARE)
+        self.pen.setposition(self.CORNER + chosen_col * self.SQUARE,
+                             self.CORNER + chosen_row * self.SQUARE)
         self.pen.color(CHOOSING_COLOR)
         self.draw_nonfilled_square(self.SQUARE)
 
@@ -356,7 +327,8 @@ class DrawingUI:
                 col -- The column where the mark is
         '''
         self.pen.color("black", self.SQUARE_COLORS[0])
-        self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
+        self.pen.setposition(self.CORNER + col * self.SQUARE,
+                             self.CORNER + row * self.SQUARE)
         self.draw_square(self.SQUARE)
 
     def remove_choice_mark(self, row, col):
@@ -370,7 +342,8 @@ class DrawingUI:
                 col -- The column where the mark is
         '''
         self.pen.color("black")
-        self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
+        self.pen.setposition(self.CORNER + col * self.SQUARE,
+                             self.CORNER + row * self.SQUARE)
         self.draw_nonfilled_square(self.SQUARE)
 
     def initialize_board(self):
@@ -405,7 +378,10 @@ class DrawingUI:
         self.pen.color("black", "white")
         self.pen.setposition(self.INDICATOR_X_COORD, self.INDICATOR_Y_COORD)
         self.draw_square(self.INDICATOR_SQUARE_SIZE)
-        self.pen.setposition(self.INDICATOR_X_COORD, self.INDICATOR_Y_COORD + self.INDICATOR_SQUARE_SIZE)
+        self.pen.setposition(
+            self.INDICATOR_X_COORD,
+            self.INDICATOR_Y_COORD + self.INDICATOR_SQUARE_SIZE
+        )
         self.draw_square(self.INDICATOR_SQUARE_SIZE)
 
     def black_turn_sign(self):
@@ -420,7 +396,7 @@ class DrawingUI:
         self.pen.setposition(self.INDICATOR_X_COORD + self.TURN_SIGN_RADUIS,
                              self.INDICATOR_Y_COORD)
         self.draw_circle(self.TURN_SIGN_RADUIS)
-    
+
     def red_turn_sign(self):
         '''
             Method -- red_turn_sign
@@ -444,8 +420,10 @@ class DrawingUI:
                 self -- The current DrawingUI object.
         '''
         self.pen.color("yellow")
-        self.pen.setposition(self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS,
-                             self.CORNER + self.SQUARE * row + self.CIRCLE_RADIUS - self.KING_MARK_SIZE)
+        self.pen.setposition(
+            self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS,
+            self.CORNER + self.SQUARE * row + self.CIRCLE_RADIUS - self.KING_MARK_SIZE
+        )
         self.draw_circle(self.KING_MARK_SIZE)
 
     def indicator_display(self):
@@ -459,3 +437,62 @@ class DrawingUI:
             self.red_turn_sign()
         else:
             self.black_turn_sign()
+
+    def show_ai_begin(self):
+        '''
+            Method -- show_ai_begin
+                Highlights the start square and the end square of the move
+                randomly selected by AI, also updates relevant information on
+                the state of game. Starts a time to move the piece selected by
+                AI.
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
+        self.game_state.get_random_ai_move(self.game_state.all_move_lst)
+        ai_start_row = self.game_state.chosen_ai_move.start[0]
+        ai_start_col = self.game_state.chosen_ai_move.start[1]
+        self.game_state.selection_occurs(ai_start_row, ai_start_col)
+        self.game_state.a_piece_move(ai_start_row, ai_start_col)
+        self.draw_highlighting_mark()
+        self.game_state.stage_of_move()
+        self.screen.ontimer(self.complete_ai_move, self.DELAY_TIME)
+
+    def complete_ai_move(self):
+        '''
+            Method -- complete_ai_move
+                Completes the move randomly chosen by AI. Also updates relevant
+                information on the state of game.
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
+        while (self.game_state.stage == self.game_state.MOVE_SELECTED or
+               self.game_state.stage == self.game_state.CONTINUE_MOVE):
+            self.remove_mark()
+            ai_end_row = self.game_state.chosen_ai_move.end[0]
+            ai_end_col = self.game_state.chosen_ai_move.end[1]
+            self.game_state.move_occurs(ai_end_row, ai_end_col)
+            if self.game_state.is_king_upgrading_move(ai_end_row):
+                ai_pre_row = self.game_state.clicks[0][0]
+                ai_pre_col = self.game_state.clicks[0][1]
+                self.game_state.squares[ai_pre_row][ai_pre_col].become_king()
+            self.game_state.update_board()
+            self.game_state.reset_endlocations_lst()
+            self.game_state.reset_valid_move_lst()
+            self.draw_board()
+            self.game_state.a_piece_move(ai_end_row, ai_end_col)
+            if (self.game_state.chosen_ai_move.is_capt and
+               self.game_state.contain_cpt_move(self.game_state.valid_moves)):
+                self.game_state.stage_of_continue_move()
+                self.game_state.selection_occurs(ai_end_row, ai_end_col)
+                self.game_state.get_cpt_end_locations()
+                self.draw_highlighting_mark()
+                self.game_state.get_random_ai_move(self.game_state.valid_moves)
+            else:
+                self.game_state.switch_turn()
+                self.game_state.all_pieces_move()
+                self.game_state.stage_of_selection()
+                self.indicator_display()
+                self.screen.onclick(self.click_handler)
+                if self.game_state.game_over():
+                    print("Game Over. You lost!")
+                    self.screen.onclick(None)
