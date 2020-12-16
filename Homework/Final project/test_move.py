@@ -14,9 +14,9 @@ def test_constructor():
 
 
 def test_eq():
-    a_move = Move([2, 1], [3, 0], False)
-    another_move = Move([6, 1], [4, 3], True)
+    non_capturing_move = Move([2, 1], [3, 0], False)
+    capturing_move = Move([6, 1], [4, 3], True)
 
-    assert(a_move != "a non-capturing move")
-    assert(a_move == Move([2, 1], [3, 0], False))
-    assert(a_move != another_move)
+    assert(non_capturing_move != "a non-capturing move")
+    assert(non_capturing_move == Move([2, 1], [3, 0], False))
+    assert(non_capturing_move != capturing_move)

@@ -25,3 +25,11 @@ def test_become_king():
 
 
 def test_eq():
+    a_black_normal_piece = Piece(BLACK)
+    a_upgraded_black_piece = Piece(BLACK).become_king()
+    a_red_normal_piece = Piece(RED)
+
+    assert(a_black_normal_piece == Piece(BLACK))
+    assert(a_black_normal_piece != a_upgraded_black_piece)
+    assert(a_black_normal_piece != a_red_normal_piece)
+    assert(a_black_normal_piece != "A black piece")
