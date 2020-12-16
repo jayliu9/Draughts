@@ -61,3 +61,17 @@ class Piece:
 
         self.directions = KING_DIRECTION
         self.is_king = True
+
+    def __eq__(self, other):
+        '''
+            Method -- __eq__
+                Checks if two Piece objects are equal
+            Parameters:
+                self -- The current Piece object
+                other -- An object to compare self to.
+            Returns:
+                True if the two objects are equal, False otherwise.
+        '''
+        if type(self) != type(other):
+            return False
+        return self.color == other.color and self.is_king == other.is_king

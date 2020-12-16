@@ -82,7 +82,7 @@ class GameState:
     SQUARE = 50
     BOARD_SIZE = NUM_SQUARES * SQUARE
     CORNER = -BOARD_SIZE / 2
-    EMPTY = ""
+    EMPTY = -1
     BLACK = 0
     RED = 1
     INITIAL_CLICK_LIST = [[0, 0], [0, 0]]
@@ -100,7 +100,6 @@ class GameState:
     CONTINUE_MOVE_SELECTED = 2
     PIECE_SELECTED = 0
     MOVE_SELECTED = 1
-    NUM_OF_STAGE = 2
 
     def __init__(self):
         '''
