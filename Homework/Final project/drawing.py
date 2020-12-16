@@ -32,6 +32,10 @@ class DrawingUI:
     CIRCLE_RADIUS = 0.5 * SQUARE
     WINDOW_SIZE = BOARD_SIZE + 4 * SQUARE
     KING_MARK_SIZE = 10
+    INDICATOR_X_COORD = CORNER - SQUARE
+    INDICATOR_Y_COORD = CORNER + 3.5 * SQUARE
+    INDICATOR_SQUARE_SIZE = 0.5 * SQUARE
+    TURN_SIGN_RADUIS = 0.5 * CIRCLE_RADIUS
 
     def __init__(self):
         '''
@@ -399,10 +403,10 @@ class DrawingUI:
                 self -- The current DrawingUI object.
         '''
         self.pen.color("black", "white")
-        self.pen.setposition(self.CORNER - 1 * self.SQUARE, self.CORNER + 3.5 * self.SQUARE)
-        self.draw_square(0.5 * self.SQUARE)
-        self.pen.setposition(self.CORNER - 1 * self.SQUARE, 0)
-        self.draw_square(0.5 * self.SQUARE)
+        self.pen.setposition(self.INDICATOR_X_COORD, self.INDICATOR_Y_COORD)
+        self.draw_square(self.INDICATOR_SQUARE_SIZE)
+        self.pen.setposition(self.INDICATOR_X_COORD, self.INDICATOR_Y_COORD + self.INDICATOR_SQUARE_SIZE)
+        self.draw_square(self.INDICATOR_SQUARE_SIZE)
 
     def black_turn_sign(self):
         '''
@@ -412,10 +416,10 @@ class DrawingUI:
                 self -- The current DrawingUI object.
         '''
         self.indicator_frame()
-        self.pen.color(self.PIECE_COLORS[0], self.PIECE_COLORS[0])
-        self.pen.setposition(self.CORNER - 1 * self.SQUARE + 0.5 * self.CIRCLE_RADIUS,
-                             self.CORNER + 3.5 * self.SQUARE)
-        self.draw_circle(0.5 * self.CIRCLE_RADIUS)
+        self.pen.color(self.PIECE_COLORS[0])
+        self.pen.setposition(self.INDICATOR_X_COORD + self.TURN_SIGN_RADUIS,
+                             self.INDICATOR_Y_COORD)
+        self.draw_circle(self.TURN_SIGN_RADUIS)
     
     def red_turn_sign(self):
         '''
@@ -425,9 +429,12 @@ class DrawingUI:
                 self -- The current DrawingUI object.
         '''
         self.indicator_frame()
-        self.pen.color(self.PIECE_COLORS[1], self.PIECE_COLORS[1])
-        self.pen.setposition(self.CORNER - 1 * self.SQUARE + 0.5 * self.CIRCLE_RADIUS, 0)
-        self.draw_circle(0.5 * self.CIRCLE_RADIUS)
+        self.pen.color(self.PIECE_COLORS[1])
+        self.pen.setposition(
+            self.INDICATOR_X_COORD + self.TURN_SIGN_RADUIS,
+            self.INDICATOR_Y_COORD + self.INDICATOR_SQUARE_SIZE
+        )
+        self.draw_circle(self.TURN_SIGN_RADUIS)
 
     def draw_king_mark(self, row, col):
         '''
@@ -436,7 +443,7 @@ class DrawingUI:
             Parameters:
                 self -- The current DrawingUI object.
         '''
-        self.pen.color("yellow", "yellow")
+        self.pen.color("yellow")
         self.pen.setposition(self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS,
                              self.CORNER + self.SQUARE * row + self.CIRCLE_RADIUS - self.KING_MARK_SIZE)
         self.draw_circle(self.KING_MARK_SIZE)
