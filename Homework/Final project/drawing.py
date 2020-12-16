@@ -12,6 +12,17 @@ from gamestate import GameState
 
 
 class DrawingUI:
+    '''
+        Class -- DrawingUI
+            The board UI.
+        Attributes:
+            game_state -- A GameState object, used to keep track of the status
+            of the game.
+            pen -- The Turtle responsible for drawing
+            screen -- The screen
+        Methods:
+            (none intended to be accessed outside the class)
+    '''
     NUM_SQUARES = 8
     SQUARE = 50
     BOARD_SIZE = NUM_SQUARES * SQUARE
@@ -23,23 +34,25 @@ class DrawingUI:
     KING_MARK_SIZE = 10
 
     def __init__(self):
+        '''
+            Constructor -- Creates a new instance of DrawingUI
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
         self.game_state = GameState()
-        self.initial_board()
-        self.black_turn_notion()
+        self.initialize_board()
+        self.black_turn_sign()
         self.screen.onclick(self.click_handler)
         turtle.done()
 
     def click_handler(self, x, y):
         '''
-            Function -- click_handler
+            Method -- click_handler
                 Called when a click occurs.
             Parameters:
-                x -- X coordinate of the click. Automatically provided by Turtle.
-                y -- Y coordinate of the click. Automatically provided by Turtle.
-            Returns:
-                Does not and should not return. Click handlers are a special type
-                of function automatically called by Turtle. You will not have
-                access to anything returned by this function.
+                self -- The current DrawingUI object.
+                x -- X coordinate of the click.
+                y -- Y coordinate of the click.
         '''
         CAPTURE_MOVE_HINT = "Attention: There exists a capturing move somewhere. Please try again."
         INVALID_MOVE_WARNING = "Warning: Invalid move."
@@ -48,14 +61,14 @@ class DrawingUI:
         #try:
         if self.game_state.current_player == self.game_state.BLACK:
             #self.click_validator(x, y)
-            row = self.get_square(y)
-            col = self.get_square(x)
-            self.remove_hint()
+            row = self.convert_to_location(y)
+            col = self.convert_to_location(x)
+            self.remove_mark()
             if self.game_state.stage == self.game_state.PIECE_SELECTED:
                 if self.game_state.contains_cur_piece(row, col):
                     self.game_state.selection_occurs(row, col)
                     self.game_state.a_piece_move(row, col)
-                    self.choosing_notation()
+                    self.draw_highlighting_mark()
                     self.game_state.stage_of_move()
                     
 
@@ -77,7 +90,7 @@ class DrawingUI:
                             self.game_state.stage_of_continue_move()
                             self.game_state.selection_occurs(row, col)
                             self.game_state.get_cpt_end_locations()
-                            self.choosing_notation()
+                            self.draw_highlighting_mark()
                         else:
                             self.game_state.switches_turn()
                             self.game_state.all_pieces_move()
@@ -86,10 +99,10 @@ class DrawingUI:
                         self.game_state.a_piece_move(row, col)
                         if self.game_state.stage == self.game_state.MOVE_SELECTED:
                             self.game_state.selection_occurs(row, col)
-                            self.choosing_notation()
+                            self.draw_highlighting_mark()
                         elif row == self.game_state.clicks[0][0] and col == self.game_state.clicks[0][1]:
                             self.game_state.get_cpt_end_locations()
-                            self.choosing_notation()
+                            self.draw_highlighting_mark()
                         else:
                             print(CONTINUE_CAPTURE_HINT)    
                     else:
@@ -120,17 +133,17 @@ class DrawingUI:
                 elif self.game_state.contains_cur_piece(row, col):
                     self.game_state.selection_occurs(row, col)
                     self.game_state.a_piece_move(row, col)
-                    self.choosing_notation()
+                    self.draw_highlighting_mark()
                 else:
                     print(INVALID_MOVE_WARNING)
                     self.game_state.reset_endlocations_lst()
                     self.game_state.reset_valid_move_lst()
                     self.game_state.stage_of_selection()
 
-            self.notion_display()
+            self.indicator_display()
 
         if self.game_state.current_player == self.game_state.RED:
-            self.remove_hint()
+            self.remove_mark()
 
             if not self.game_state.game_over():
                 chosen_ai_move = self.game_state.get_random_ai_move(self.game_state.all_move_lst)
@@ -138,11 +151,11 @@ class DrawingUI:
                 ai_start_col = chosen_ai_move.start[1]
                 self.game_state.selection_occurs(ai_start_row, ai_start_col)
                 self.game_state.a_piece_move(ai_start_row, ai_start_col)
-                self.choosing_notation()
+                self.draw_highlighting_mark()
                 self.game_state.stage_of_move()
 
                 while self.game_state.stage == self.game_state.MOVE_SELECTED or self.game_state.stage == self.game_state.CONTINUE_MOVE_SELECTED:
-                    self.remove_hint()
+                    self.remove_mark()
                     print("loop")
                     ai_end_row = chosen_ai_move.end[0]
                     ai_end_col = chosen_ai_move.end[1]
@@ -160,13 +173,13 @@ class DrawingUI:
                         self.game_state.stage_of_continue_move()
                         self.game_state.selection_occurs(ai_end_row, ai_end_col)
                         self.game_state.get_cpt_end_locations()
-                        self.choosing_notation()
+                        self.draw_highlighting_mark()
                         chosen_ai_move = self.game_state.get_random_ai_move(self.game_state.valid_moves)
                     else:
                         self.game_state.switches_turn()
                         self.game_state.all_pieces_move()
                         self.game_state.stage_of_selection()
-                self.notion_display()
+                self.indicator_display()
 
                 if self.game_state.game_over():
                     print("Game Over. You lost!")
@@ -179,11 +192,28 @@ class DrawingUI:
             #print("out of range")
 
 
-    def get_square(self, coord):
+    def convert_to_location(self, coord):
+        '''
+            Method -- convert_to_location
+                Converts a click coordinate to a square location.
+            Parameters:
+                self -- the current Board object
+                coord -- the click coordinate (x or y)
+            Returns:
+                The index of the square that was clicked. Works for row and col
+        '''
         return int((coord - self.CORNER) // self.SQUARE)
 
 
-    def remove_hint(self):
+    def remove_mark(self):
+        '''
+            Method -- remove_mark
+                Removes the marks that highlight the selected square containing
+                a piece and those which highlight possibly reachable squares of
+                the piece.
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
         selection_click = self.game_state.clicks[0]
         chosen_row = selection_click[0]
         chosen_col = selection_click[1]
@@ -191,16 +221,17 @@ class DrawingUI:
         for end_location in self.game_state.valid_end_locations:
             row_to_move = end_location[0]
             col_to_move = end_location[1]
-            self.remove_move_mark(row_to_move, col_to_move)
+            self.remove_reachable_mark(row_to_move, col_to_move)
     
 
     def click_validator(self, x, y):
         '''
-            Function -- click_validation
+            Method -- click_validator
                 Checks that the click was in bounds of the board.
             Parameters:
-                x -- X coordinate of the click. Automatically provided by Turtle.
-                y -- Y coordinate of the click. Automatically provided by Turtle.
+                self -- The current DrawingUI object.
+                x -- X coordinate of the click.
+                y -- Y coordinate of the click.
             Raises:
                 ValueError -- If the click was out of bounds of the board.
             Returns:
@@ -214,12 +245,10 @@ class DrawingUI:
     def draw_square(self, size):
         '''
             Method -- draw_square
-                Draw a square of a given size.
+                Draws a filled square of a given size.
             Parameters:
-                a_turtle -- an instance of Turtle
+                self -- The current DrawingUI object.
                 size -- the length of each side of the square
-            Returns:
-                Nothing. Draws a square in the graphics window.
         '''
         RIGHT_ANGLE = 90
         self.pen.begin_fill()
@@ -233,12 +262,10 @@ class DrawingUI:
     def draw_circle(self, radius):
         '''
             Method -- draw_circle
-                Draw a circle with a given radius.
+                Draws a filled circle with a given radius.
             Parameters:
-                a_turtle -- an instance of Turtle
-                size -- the radius of the circle
-            Returns:
-                Nothing. Draws a circle in the graphics windo.
+                self -- The current DrawingUI object.
+                radius -- the radius of the circle
         '''
         self.pen.pendown()
         self.pen.begin_fill()
@@ -248,6 +275,12 @@ class DrawingUI:
     
 
     def draw_board(self):
+        '''
+            Method -- draw_board
+                Draws the whole board containing all the pieces on the board.
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
         cells = self.game_state.squares
         for row in range(self.game_state.NUM_SQUARES):
             for col in range(self.game_state.NUM_SQUARES):
@@ -262,9 +295,16 @@ class DrawingUI:
                         self.pen.setposition(self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS, self.CORNER + self.SQUARE * row)
                         self.draw_circle(self.CIRCLE_RADIUS)
                         if a_piece.is_king:
-                            self.king_mark(row, col)
+                            self.draw_king_mark(row, col)
 
-    def draws_nonfilled_square(self, size):
+    def draw_nonfilled_square(self, size):
+        '''
+            Method -- draw_nonfilled_square
+                Draws a unfilled square of a given size.
+            Parameters:
+                self -- The current DrawingUI object.
+                size -- the length of each side of the square
+        '''
         RIGHT_ANGLE = 90
         self.pen.pendown()
         for i in range(4):
@@ -272,7 +312,15 @@ class DrawingUI:
             self.pen.left(RIGHT_ANGLE)
         self.pen.penup()
     
-    def choosing_notation(self):
+    def draw_highlighting_mark(self):
+        '''
+            Method -- draw_highlighting_mark
+                Draws the marks that highlight the selected square containing
+                a piece and those highlighting possibly reachable squares of
+                the piece.
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
         CHOOSING_COLOR = "light green"
         ORIGINAL_COLOR = "black"
         HINT_COLOR = "red"
@@ -283,7 +331,7 @@ class DrawingUI:
 
         self.pen.setposition(self.CORNER + chosen_col * self.SQUARE, self.CORNER + chosen_row * self.SQUARE)
         self.pen.color(CHOOSING_COLOR)
-        self.draws_nonfilled_square(self.SQUARE)
+        self.draw_nonfilled_square(self.SQUARE)
 
         self.pen.color(HINT_COLOR)
         for end_location in self.game_state.valid_end_locations:
@@ -291,20 +339,43 @@ class DrawingUI:
             next_col = end_location[1]
             self.pen.setposition(self.CORNER + next_col * self.SQUARE,
                                  self.CORNER + next_row * self.SQUARE)
-            self.draws_nonfilled_square(self.SQUARE)
+            self.draw_nonfilled_square(self.SQUARE)
         self.pen.color(ORIGINAL_COLOR)
 
-    def remove_move_mark(self, row, col):
+    def remove_reachable_mark(self, row, col):
+        '''
+            Method -- remove_reachable_mark
+                Removes the mark highlighting the possibly reachable square.
+            Parameters:
+                self -- The current DrawingUI object.
+                row -- The row where the mark is
+                col -- The column where the mark is
+        '''
         self.pen.color("black", self.SQUARE_COLORS[0])
         self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
         self.draw_square(self.SQUARE)
 
     def remove_choice_mark(self, row, col):
+        '''
+            Method -- remove_choice_mark
+                Removes the mark that highlights the selected square containing
+                a piece.
+            Parameters:
+                self -- The current DrawingUI object.
+                row -- The row where the mark is
+                col -- The column where the mark is
+        '''
         self.pen.color("black")
         self.pen.setposition(self.CORNER + col * self.SQUARE, self.CORNER + row * self.SQUARE)
-        self.draws_nonfilled_square(self.SQUARE)
+        self.draw_nonfilled_square(self.SQUARE)
 
-    def initial_board(self):
+    def initialize_board(self):
+        '''
+            Method -- initialize_board
+                Helper method to initialize the board.
+            Parameter:
+                self -- The current DrawingUI object.
+        '''
         turtle.setup(self.WINDOW_SIZE, self.WINDOW_SIZE)
         turtle.screensize(self.BOARD_SIZE, self.BOARD_SIZE)
         turtle.bgcolor("white")
@@ -320,34 +391,64 @@ class DrawingUI:
 
         self.draw_board()
 
-    def notion_frame(self):
+    def indicator_frame(self):
+        '''
+            Method -- indicator_frame
+                Creates the frame of the indicator.
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
         self.pen.color("black", "white")
         self.pen.setposition(self.CORNER - 1 * self.SQUARE, self.CORNER + 3.5 * self.SQUARE)
         self.draw_square(0.5 * self.SQUARE)
         self.pen.setposition(self.CORNER - 1 * self.SQUARE, 0)
         self.draw_square(0.5 * self.SQUARE)
 
-    def black_turn_notion(self):
-        self.notion_frame()
+    def black_turn_sign(self):
+        '''
+            Method -- black_turn_sign
+                Displays the specific sign when it is black's turn.
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
+        self.indicator_frame()
         self.pen.color(self.PIECE_COLORS[0], self.PIECE_COLORS[0])
         self.pen.setposition(self.CORNER - 1 * self.SQUARE + 0.5 * self.CIRCLE_RADIUS,
                              self.CORNER + 3.5 * self.SQUARE)
         self.draw_circle(0.5 * self.CIRCLE_RADIUS)
     
-    def red_turn_notion(self):
-        self.notion_frame()
+    def red_turn_sign(self):
+        '''
+            Method -- red_turn_sign
+                Displays the specific sign when it is red's turn.
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
+        self.indicator_frame()
         self.pen.color(self.PIECE_COLORS[1], self.PIECE_COLORS[1])
         self.pen.setposition(self.CORNER - 1 * self.SQUARE + 0.5 * self.CIRCLE_RADIUS, 0)
         self.draw_circle(0.5 * self.CIRCLE_RADIUS)
 
-    def king_mark(self, row, col):
+    def draw_king_mark(self, row, col):
+        '''
+            Method -- draw_king_mark
+                Draws the mark distinguishing a king piece from normal pieces.
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
         self.pen.color("yellow", "yellow")
         self.pen.setposition(self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS,
                              self.CORNER + self.SQUARE * row + self.CIRCLE_RADIUS - self.KING_MARK_SIZE)
         self.draw_circle(self.KING_MARK_SIZE)
 
-    def notion_display(self):
+    def indicator_display(self):
+        '''
+            Method -- indicator_display
+                Displays the indicator which shows whose turn it is.
+            Parameters:
+                self -- The current DrawingUI object.
+        '''
         if self.game_state.current_player == self.game_state.RED:
-            self.red_turn_notion()
+            self.red_turn_sign()
         else:
-            self.black_turn_notion()
+            self.black_turn_sign()
