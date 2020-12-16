@@ -12,7 +12,7 @@ The code is move class.
 class Move:
     '''
         Class -- Move
-            The move.
+            A move.
         Attributes:
             start -- The location of the square containing the piece at the
             beginning of the move.
@@ -21,6 +21,16 @@ class Move:
     '''
 
     def __init__(self, start, end, is_capt):
+        '''
+            Constructor -- Creates a new instance of Move
+            Parameters:
+                self -- The current Move object.
+                start -- The location of the square containing the piece at the
+                beginning of the move
+                end -- The location of the square that the moved piece ends up
+                in.
+                is_capt -- Whether or not it is a capturing move.
+        '''
         self.start = start
         self.end = end
         self.is_capt = is_capt

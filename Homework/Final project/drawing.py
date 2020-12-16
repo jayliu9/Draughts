@@ -79,7 +79,7 @@ class DrawingUI:
                         if self.game_state.is_king_upgrading_move(row):
                             pre_row = self.game_state.clicks[0][0]
                             pre_col = self.game_state.clicks[0][1]
-                            self.game_state.squares[pre_row][pre_col].becomes_king()
+                            self.game_state.squares[pre_row][pre_col].become_king()
                         self.game_state.updates_board()
                         self.game_state.reset_endlocations_lst()
                         self.game_state.reset_valid_move_lst()
@@ -121,7 +121,7 @@ class DrawingUI:
                         if self.game_state.is_king_upgrading_move(row):
                             pre_row = self.game_state.clicks[0][0]
                             pre_col = self.game_state.clicks[0][1]
-                            self.game_state.squares[pre_row][pre_col].becomes_king()
+                            self.game_state.squares[pre_row][pre_col].become_king()
                         self.game_state.updates_board()
                         self.game_state.reset_endlocations_lst()
                         self.game_state.reset_valid_move_lst()
@@ -163,7 +163,7 @@ class DrawingUI:
                     if self.game_state.is_king_upgrading_move(ai_end_row):
                         ai_pre_row = self.game_state.clicks[0][0]
                         ai_pre_col = self.game_state.clicks[0][1]
-                        self.game_state.squares[ai_pre_row][ai_pre_col].becomes_king()
+                        self.game_state.squares[ai_pre_row][ai_pre_col].become_king()
                     self.game_state.updates_board()
                     self.game_state.reset_endlocations_lst()
                     self.game_state.reset_valid_move_lst()
