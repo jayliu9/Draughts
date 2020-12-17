@@ -166,7 +166,7 @@ class DrawingUI:
                     print("Game Over. You win!")
                     self.screen.onclick(None)
         except ValueError:
-            print("out of range")
+            print("Clicked out of bounds of board.")
 
     def convert_to_location(self, coord):
         '''
