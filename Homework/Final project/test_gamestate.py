@@ -39,7 +39,7 @@ def test_constructor():
     assert(game.valid_moves == [])
     assert(game.valid_end_locations == [])
     assert(game.all_move_lst == all_move_list)
-    assert(game.chosen_ai_move == None)
+    assert(game.chosen_ai_move is None)
 
 
 def test_contain_any_piece():
@@ -131,7 +131,7 @@ def test_a_piece_move():
     assert(game.valid_end_locations == [])
     # If the black piece in 2, 1 is considered to be moved
     game.a_piece_move(2, 1)
-    assert(game.valid_moves == [Move([2, 1], [4, 3], True), 
+    assert(game.valid_moves == [Move([2, 1], [4, 3], True),
                                 Move([2, 1], [3, 0], False)])
     assert(game.valid_end_locations == [[4, 3], [3, 0]])
 
@@ -192,8 +192,8 @@ def test_all_pieces_move():
         [red_p, -1, red_p, -1, red_p, -1, red_p, -1]
     ]
     game.all_pieces_move()
-    assert(game.all_move_lst == [Move([2, 3], [4, 1], True), 
-                                 Move([2, 1], [4, 3], True), 
+    assert(game.all_move_lst == [Move([2, 3], [4, 1], True),
+                                 Move([2, 1], [4, 3], True),
                                  Move([2, 1], [3, 0], False),
                                  Move([2, 3], [3, 4], False),
                                  Move([2, 5], [3, 4], False),
@@ -276,11 +276,11 @@ def test_is_king_upgrading_move():
 
 def test_contain_cpt_move():
     game = GameState()
-    have_capt_move_list = [Move([2, 3], [4, 1], True), 
+    have_capt_move_list = [Move([2, 3], [4, 1], True),
                            Move([2, 1], [4, 3], True),
                            Move([2, 3], [3, 4], False),
                            Move([2, 5], [3, 4], False)]
-    
+
     no_capt_move_list = [Move([2, 3], [3, 4], False),
                          Move([2, 5], [3, 4], False),
                          Move([2, 7], [3, 6], False)]
@@ -407,7 +407,7 @@ def test_game_over():
 
 def test_get_cpt_moves():
     game = GameState()
-    have_capt_move_list = [Move([2, 3], [4, 1], True), 
+    have_capt_move_list = [Move([2, 3], [4, 1], True),
                            Move([2, 1], [4, 3], True),
                            Move([2, 3], [3, 4], False),
                            Move([2, 5], [3, 4], False)]

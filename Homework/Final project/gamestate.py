@@ -42,14 +42,14 @@ class GameState:
             given location.
             reset_endlocations_lst -- Clears the list storing the valid end
             locations of a piece.
-            reset_valid_move_lst -- Clears the list storing the valid moves of 
+            reset_valid_move_lst -- Clears the list storing the valid moves of
             a piece.
             a_piece_move -- Updates the list containing valid moves and the
             list containing valid end locations when a piece is considered to
             be moved.
             all_pieces_move -- Updates the list containing all possible moves
             of all pieces.
-            update_board -- Updates the squares list to update the state of 
+            update_board -- Updates the squares list to update the state of
             the board.
             selection_occurs -- Updates the selection click in the clicks list.
             stage_of_selection -- Updates the stage of the turn to the
@@ -75,7 +75,7 @@ class GameState:
             the board are captured
             game_over -- Checks if the game is over.
             get_cpt_moves -- Gets all capturing moves from the given list.
-            get_random_ai_move -- Randomly chooses a move from the given move 
+            get_random_ai_move -- Randomly chooses a move from the given move
             list to update the AI move. Non-capturing moves in the given list
             will be ignored if there exist capturing moves in the list.
     '''
@@ -187,7 +187,7 @@ class GameState:
         for direction in piece.directions:
             move_row = row + direction[0]
             move_col = col + direction[1]
-            if (not self.out_of_index(move_row, move_col) and 
+            if (not self.out_of_index(move_row, move_col) and
                not self.contain_any_piece(move_row, move_col)):
                 noncpt_move_lst.append(
                     Move([row, col], [move_row, move_col], False))
@@ -257,7 +257,7 @@ class GameState:
         for move in moves:
             self.valid_moves.append(move)
             self.valid_end_locations.append(move.end)
-            
+
     def all_pieces_move(self):
         '''
             Method -- all_pieces_move
@@ -341,7 +341,7 @@ class GameState:
                 row -- The row to which the piece has been moved
                 col -- The column to which the piece has been moved
         '''
-        self.clicks[1] = [row, col] 
+        self.clicks[1] = [row, col]
 
     def switch_turn(self):
         '''
@@ -369,10 +369,10 @@ class GameState:
         '''
         TOP_ROW = 7
         BOTTOM_ROW = 0
-        
+
         return (self.current_player == self.BLACK and row == TOP_ROW or
                 self.current_player == self.RED and row == BOTTOM_ROW)
-    
+
     def contain_cpt_move(self, move_lst):
         '''
             Method -- contain_cpt_move
@@ -497,7 +497,7 @@ class GameState:
             Method -- get_random_ai_move
                 Randomly chooses a move from the given move list to update
                 the AI move. Non-capturing moves in the given list will be
-                ignored if there exist capturing moves in the list. 
+                ignored if there exist capturing moves in the list.
             Parameters:
                 self -- The current GameState object
                 all_possible_moves -- The given move list

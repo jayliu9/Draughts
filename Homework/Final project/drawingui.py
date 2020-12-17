@@ -59,7 +59,7 @@ class DrawingUI:
                 x -- X coordinate of the click.
                 y -- Y coordinate of the click.
         '''
-        CAPTURE_MOVE_HINT = ("Attention: " + 
+        CAPTURE_MOVE_HINT = ("Attention: " +
                              "There exists a capturing move somewhere. " +
                              "Please try again.")
         INVALID_MOVE_WARNING = "Warning: Invalid move."
@@ -87,7 +87,8 @@ class DrawingUI:
                             if self.game_state.is_king_upgrading_move(row):
                                 pre_row = self.game_state.clicks[0][0]
                                 pre_col = self.game_state.clicks[0][1]
-                                self.game_state.squares[pre_row][pre_col].become_king()
+                                self.game_state.squares[pre_row][pre_col] \
+                                    .become_king()
                             self.game_state.update_board()
                             self.game_state.reset_endlocations_lst()
                             self.game_state.reset_valid_move_lst()
@@ -115,7 +116,7 @@ class DrawingUI:
                                 self.game_state.get_cpt_end_locations()
                                 self.draw_highlighting_mark()
                             else:
-                                print(CONTINUE_CAPTURE_HINT)    
+                                print(CONTINUE_CAPTURE_HINT)
                         else:
                             if (self.game_state.stage ==
                                self.game_state.MOVE_SELECTED):
@@ -130,19 +131,20 @@ class DrawingUI:
                             self.game_state.reset_endlocations_lst()
                             self.game_state.reset_valid_move_lst()
                     elif self.game_state.is_psb_end_location(row, col):
-                            self.game_state.move_occurs(row, col)
-                            if self.game_state.is_king_upgrading_move(row):
-                                pre_row = self.game_state.clicks[0][0]
-                                pre_col = self.game_state.clicks[0][1]
-                                self.game_state.squares[pre_row][pre_col].become_king()
-                            self.game_state.update_board()
-                            self.game_state.reset_endlocations_lst()
-                            self.game_state.reset_valid_move_lst()
-                            self.draw_board()
+                        self.game_state.move_occurs(row, col)
+                        if self.game_state.is_king_upgrading_move(row):
+                            pre_row = self.game_state.clicks[0][0]
+                            pre_col = self.game_state.clicks[0][1]
+                            self.game_state.squares[pre_row][pre_col] \
+                                .become_king()
+                        self.game_state.update_board()
+                        self.game_state.reset_endlocations_lst()
+                        self.game_state.reset_valid_move_lst()
+                        self.draw_board()
 
-                            self.game_state.switch_turn()
-                            self.game_state.all_pieces_move()
-                            self.game_state.stage_of_selection()
+                        self.game_state.switch_turn()
+                        self.game_state.all_pieces_move()
+                        self.game_state.stage_of_selection()
                     elif self.game_state.contain_cur_piece(row, col):
                         self.game_state.selection_occurs(row, col)
                         self.game_state.a_piece_move(row, col)
@@ -163,7 +165,7 @@ class DrawingUI:
                 else:
                     print("Game Over. You win!")
                     self.screen.onclick(None)
-        except:
+        except ValueError:
             print("out of range")
 
     def convert_to_location(self, coord):
@@ -422,7 +424,8 @@ class DrawingUI:
         self.pen.color("yellow")
         self.pen.setposition(
             self.CORNER + self.SQUARE * col + self.CIRCLE_RADIUS,
-            self.CORNER + self.SQUARE * row + self.CIRCLE_RADIUS - self.KING_MARK_SIZE
+            (self.CORNER + self.SQUARE * row + self.CIRCLE_RADIUS -
+             self.KING_MARK_SIZE)
         )
         self.draw_circle(self.KING_MARK_SIZE)
 
