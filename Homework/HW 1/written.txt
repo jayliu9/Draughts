@@ -1,0 +1,40 @@
+HW 1: Data types and arithmetic operations
+
+Name: Shijie Liu
+NUID: 001561546
+Course: CS 5001    Course Number: 18529
+Semester: Fall 2020
+
+
+Question 1:
+    a) float
+    b) int
+    c) int
+    d) bool
+    e) string
+    f) float
+    g) string
+    i) int
+
+
+Question 2:
+    a) 1.4
+    b) 1.4
+    c) 1
+    d) 4
+    e) 36
+    f) 0
+    g) "red1234"
+    h) "yellowyellow"
+    
+
+Question 3:
+    The reason is that in the third line, the variable, 'hello', is not defined.
+
+Question 4:
+    The code prints 9 to the console if the user enters 10.
+
+
+
+
+
