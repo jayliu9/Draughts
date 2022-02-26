@@ -1,1 +1,1 @@
-# Shijie_Liu_repository
+# Draughts - A graphic game of Checkers
